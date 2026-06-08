@@ -1,0 +1,20 @@
+Things to do:
+~ The index lands the user on https://www.quotations.bizzness.in/ so we need to create an actual landing page for quotations, where clients lands and somehow navigate to their respective page. Alternatively the client never lands here, he's always given their dedicated page URL, so this landing page serves as a fallback plan in case someone wants to notoriously explore what's there on the root index page.
+~ Once above landing page is created, rename the index to something else e.g. rph1, so that the client now lands on https://www.quotations.bizzness.in/rph1
+~ As a result whenever there's a new quotation created, just drop the HTML file in this folder, rename it and push. Refer to the following:
+
+Here's how it looks finally:
+repo file: index.html        → quotations.bizzness.in
+repo file: rph1.html         → quotations.bizzness.in/rph1
+repo file: abc-hardware.html → quotations.bizzness.in/abc-hardware
+
+~~~ How to add & list a new quotation:
+~ Simply drop the HTML file here
+~ Rename it as needed
+~ Run these commands
+git add .
+git commit -m "Updated pricing structure"
+git push
+
+Note: How Git knows where to push and never confuses repos
+~ When you run 'git init' the first time in any folder, for example in this one, it initialises a git repository in the folder -- i.e. it creates a hidden .git folder inside the project folder on computer. That folder contains the remote URL — the address of that specific repo on GitHub. When you run git push command from inside that folder for example, our quotation-tool folder here, Git reads that folder's remote URL and pushes only there. It has no awareness of your other projects at all."

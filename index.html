@@ -170,6 +170,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F8F9FC;color:#0F172A
 .pin-dot.error{background:#EF4444;}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
 .shake{animation:shake .4s ease;}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 .pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
 .pin-key{height:50px;border:none;background:#F8FAFC;border-radius:12px;font-size:19px;font-weight:600;color:#0F172A;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .1s;}
 .pin-key:hover{background:#EEF2F7;}
@@ -568,6 +569,10 @@ const P2_FEATURES=[
 //  STATE
 // ══════════════════════════════════════════════════════
 const SK='eq-v3';
+// ─── BAKED CONFIG (populated by "Publish Changes" export) ───────────────────
+// Do not edit this line manually. Use the admin panel → Settings → Publish.
+const SAVED_CONFIG = null;
+// ────────────────────────────────────────────────────────────────────────────
 let option='shopify';
 let features=DEF_F.map(f=>({...f}));
 let prices={};
@@ -580,12 +585,80 @@ let expandedCats=new Set(CATS.map(c=>c.id));
 let activeAdminTab='features';
 
 // ══════════════════════════════════════════════════════
+//  PUBLISH — bake prices into file & download
+// ══════════════════════════════════════════════════════
+async function exportUpdatedFile(){
+  const btn=document.getElementById('exportBtn');
+  if(!btn)return;
+  btn.disabled=true;
+  btn.innerHTML=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.18-6.78"/></svg> Fetching file...`;
+
+  try{
+    // Fetch the live file from the server (clean copy, no DOM changes)
+    const resp=await fetch(window.location.href+'?nocache='+Date.now());
+    const html=await resp.text();
+
+    // Build the config object from current in-memory state
+    const config={
+      prices:{...prices},
+      recurringPrices:{...recurringPrices},
+      mPrices:{...mPrices},
+      catalogRates:{...catalogRates},
+      pin:adminPin,
+    };
+
+    // Bake the config into the file by replacing the SAVED_CONFIG line
+    const configLine=`const SAVED_CONFIG = ${JSON.stringify(config)};`;
+    const updated=html.replace(/const SAVED_CONFIG = [^;]+;/,configLine);
+
+    if(updated===html){
+      btn.textContent='⚠ Could not locate config line — check file';
+      btn.disabled=false;
+      return;
+    }
+
+    // Trigger download
+    const blob=new Blob([updated],{type:'text/html'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='index.html';
+    document.body.appendChild(a);a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    btn.style.background='#059669';
+    btn.innerHTML=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Downloaded! Now push to GitHub →`;
+    setTimeout(()=>{
+      btn.disabled=false;
+      btn.style.background='var(--accent)';
+      btn.innerHTML=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download Updated index.html`;
+    },4000);
+  }catch(e){
+    btn.textContent='Error fetching file — try again';
+    btn.disabled=false;
+  }
+}
+
+// ══════════════════════════════════════════════════════
 //  STORAGE (localStorage for standalone hosting)
 // ══════════════════════════════════════════════════════
 function saveStorage(){
   try{localStorage.setItem(SK,JSON.stringify({prices,recurringPrices,mPrices,catalogRates,pin:adminPin}));}catch(e){}
 }
 function loadStorage(){
+  // Priority 1: baked-in config from last "Publish Changes" export
+  if(SAVED_CONFIG !== null){
+    try{
+      if(SAVED_CONFIG.prices)prices=SAVED_CONFIG.prices;
+      if(SAVED_CONFIG.recurringPrices)recurringPrices=SAVED_CONFIG.recurringPrices;
+      if(SAVED_CONFIG.mPrices)mPrices=SAVED_CONFIG.mPrices;
+      if(SAVED_CONFIG.catalogRates)catalogRates={...DEF_CAT,...SAVED_CONFIG.catalogRates};
+      if(SAVED_CONFIG.pin)adminPin=SAVED_CONFIG.pin;
+    }catch(e){}
+    renderAll();
+    return;
+  }
+  // Priority 2: localStorage (device-local edits, not yet published)
   try{
     const s=localStorage.getItem(SK);
     if(s){const d=JSON.parse(s);
@@ -938,20 +1011,38 @@ function renderAdminBody(){
         </div>
       </div>`).join('');
   }else if(activeAdminTab==='settings'){
+    const isPublished = SAVED_CONFIG !== null;
     body.innerHTML=`
-      <div class="admin-feat-card">
+      <div class="admin-feat-card" style="background:#0F172A;border:none;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:18px;">🚀</span>
+          <div class="admin-feat-name" style="color:#fff;margin-bottom:0;">Publish Changes to Everyone</div>
+        </div>
+        <div style="font-size:12px;color:#94A3B8;margin-bottom:14px;line-height:1.7;">
+          Price edits you make in this panel are currently saved only on <strong style="color:#F1F5F9;">this browser, this device</strong>. Your client and your own phone still see the old prices.<br><br>
+          Hit the button below — it bakes your current prices into a new <code style="background:#1E293B;padding:1px 5px;border-radius:4px;color:#7DD3FC;">index.html</code> file and downloads it. Replace the file in your project folder and push to GitHub. Cloudflare redeploys in ~30 seconds and <strong style="color:#F1F5F9;">every device on earth sees the new prices</strong>.
+        </div>
+        <button id="exportBtn" onclick="exportUpdatedFile()" style="width:100%;padding:13px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Updated index.html
+        </button>
+        <div style="margin-top:10px;padding:8px 10px;background:#1E293B;border-radius:8px;font-size:11px;color:#64748B;line-height:1.7;">
+          After downloading, run in Git Bash from your project folder:<br>
+          <code style="color:#7DD3FC;">git add . &amp;&amp; git commit -m "update prices" &amp;&amp; git push</code>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:${isPublished?'#4ADE80':'#F59E0B'};padding:6px 10px;background:${isPublished?'#052E16':'#1C1008'};border-radius:8px;">
+          ${isPublished?'✅ This file has baked-in prices from a previous publish.':'⚠ This file is using browser-local prices only — not yet published.'}
+        </div>
+      </div>
+      <div class="admin-feat-card" style="margin-top:10px;">
         <div class="admin-feat-name">Change Admin PIN</div>
-        <div style="font-size:12px;color:#94A3B8;margin-bottom:10px;">Set a new 4-digit numeric PIN. Current PIN remains active until you save.</div>
+        <div style="font-size:12px;color:#94A3B8;margin-bottom:10px;">Set a new 4-digit PIN. Takes effect on next Publish + push.</div>
         <input class="admin-price-input" type="password" maxlength="4" id="newPinInput" placeholder="New 4-digit PIN" style="letter-spacing:6px;font-size:20px;text-align:center;" oninput="this.value=this.value.replace(/\\D/g,'').slice(0,4)">
       </div>
       <div class="admin-feat-card" style="margin-top:10px;">
         <div class="admin-feat-name">Reset All Prices to Defaults</div>
-        <div style="font-size:12px;color:#94A3B8;margin-bottom:10px;">Clears all your custom prices and restores the original values. This cannot be undone.</div>
+        <div style="font-size:12px;color:#94A3B8;margin-bottom:10px;">Clears all custom prices and restores original values. Cannot be undone.</div>
         <button class="admin-reset-btn" onclick="resetPrices()">⚠ Reset to Default Prices</button>
-      </div>
-      <div class="admin-feat-card" style="margin-top:10px;background:#F0FDF4;border:1px solid #BBF7D0;">
-        <div class="admin-feat-name" style="color:#166534;">💾 Storage</div>
-        <div style="font-size:12px;color:#166534;">All price changes are saved in your browser's localStorage. They persist across page refreshes and browser restarts on the same device.</div>
       </div>`;
   }
 }
