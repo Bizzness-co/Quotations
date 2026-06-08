@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eCommerce Estimate — Hardware Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F8F9FC;color:#0F172A;min-height:100vh;}
+.serif{font-family:'Playfair Display',Georgia,serif;}
+:root{--accent:#059669;--accent-light:#ECFDF5;}
+
+.wrap{max-width:700px;margin:0 auto;padding:0 16px 160px;}
+.header{background:#fff;border-bottom:1px solid #E8ECF2;padding:20px 16px 14px;position:sticky;top:0;z-index:30;}
+.header-inner{max-width:700px;margin:0 auto;}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+.project-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px;}
+.project-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:#0F172A;line-height:1.2;}
+.project-sub{font-size:12px;color:#94A3B8;margin-top:3px;}
+.total-badge{text-align:right;flex-shrink:0;margin-left:16px;}
+.total-label{font-size:10px;color:#94A3B8;margin-bottom:2px;}
+.total-amount{font-size:26px;font-weight:800;color:var(--accent);line-height:1;}
+.total-monthly{font-size:11px;color:#94A3B8;margin-top:2px;}
+.option-toggle{display:flex;background:#F1F5F9;border-radius:12px;padding:4px;}
+.opt-btn{flex:1;padding:10px 8px;border-radius:9px;border:none;cursor:pointer;background:transparent;transition:all .2s;text-align:center;}
+.opt-btn.active{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.opt-btn-label{font-size:13px;font-weight:700;display:block;}
+.opt-btn-sub{font-size:10px;font-weight:400;opacity:.55;display:block;margin-top:1px;}
+.opt-btn.active .opt-btn-label{color:var(--accent);}
+.opt-btn:not(.active) .opt-btn-label{color:#64748B;}
+
+.cat-header{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;cursor:pointer;border:none;width:100%;text-align:left;margin-bottom:8px;transition:opacity .15s;}
+.cat-header:hover{opacity:.85;}
+.cat-label{flex:1;font-size:13px;font-weight:700;}
+.cat-count{font-size:11px;color:#94A3B8;margin-right:4px;}
+.chevron{transition:transform .2s;flex-shrink:0;}
+.chevron.open{transform:rotate(180deg);}
+
+.feat-card{background:#fff;border-radius:14px;border:1px solid #E8ECF2;border-left-width:3px;margin-bottom:8px;transition:all .2s;}
+.feat-card.excluded{opacity:.48;}
+.feat-card.phase2{border-style:dashed;border-color:#FCD34D;border-left-width:1px;background:#FFFEF7;}
+.feat-inner{padding:14px;}
+.feat-top{display:flex;align-items:flex-start;gap:10px;}
+.feat-toggle{width:20px;height:20px;min-width:20px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s;}
+.feat-toggle.on{background:#0F172A;}
+.feat-toggle.off{background:#E2E8F0;}
+.feat-body{flex:1;min-width:0;}
+.feat-name-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.feat-name{font-size:13px;font-weight:700;color:#0F172A;}
+.feat-tag{font-size:11px;color:#94A3B8;margin-top:2px;}
+.feat-price{text-align:right;flex-shrink:0;}
+.feat-price-val{font-size:14px;font-weight:800;color:#0F172A;}
+.feat-price-val.struck{text-decoration:line-through;color:#CBD5E1;}
+.feat-price-lbl{font-size:10px;color:#94A3B8;}
+.feat-desc{font-size:12px;color:#64748B;margin-top:8px;line-height:1.65;}
+.feat-actions{display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap;}
+.feat-action{font-size:11px;font-weight:600;cursor:pointer;border:none;background:transparent;display:flex;align-items:center;gap:4px;padding:0;transition:opacity .15s;}
+.feat-action:hover{opacity:.65;}
+.feat-action.details{color:#3B82F6;}
+.feat-action.push{color:#D97706;}
+.feat-action.pull{color:#059669;}
+.phase2-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:99px;background:#FEF3C7;color:#92400E;margin-left:6px;vertical-align:middle;}
+
+.card{background:#fff;border-radius:16px;border:1px solid #E8ECF2;overflow:hidden;}
+.card-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #F1F5F9;}
+.card-row:last-child{border-bottom:none;}
+.card-row-name{font-size:13px;font-weight:600;color:#0F172A;}
+.card-row-desc{font-size:11px;color:#94A3B8;margin-top:2px;line-height:1.5;}
+.card-row-price{text-align:right;flex-shrink:0;margin-left:16px;}
+.card-row-price-val{font-size:14px;font-weight:700;color:#0F172A;}
+.card-row-price-per{font-size:10px;color:#94A3B8;}
+
+.maint-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.maint-card{background:#fff;border-radius:16px;border:2px solid #E8ECF2;padding:16px;cursor:pointer;text-align:left;width:100%;transition:all .2s;}
+.maint-card.active{border-color:var(--accent);background:var(--accent-light);}
+.maint-card-name{font-size:12px;font-weight:700;color:#0F172A;margin-bottom:8px;}
+.maint-card-price{font-size:22px;font-weight:800;margin-bottom:2px;color:#0F172A;}
+.maint-card.active .maint-card-price{color:var(--accent);}
+.maint-card-per{font-size:10px;color:#94A3B8;margin-bottom:12px;}
+.maint-inc-item{display:flex;align-items:flex-start;gap:6px;margin-bottom:5px;}
+.maint-inc-dot{width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.maint-inc-text{font-size:11px;color:#475569;line-height:1.4;}
+.more-label{font-size:11px;color:#94A3B8;margin-top:5px;}
+.maint-check-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.view-plan-btn{font-size:11px;font-weight:600;color:var(--accent);border:1px solid var(--accent);background:transparent;border-radius:8px;padding:5px 10px;cursor:pointer;margin-top:10px;width:100%;}
+
+.section{margin-top:28px;}
+.sec-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:#0F172A;margin-bottom:4px;}
+.sec-sub{font-size:12px;color:#94A3B8;margin-bottom:12px;line-height:1.5;}
+.catalog-note{font-size:11px;color:#94A3B8;font-style:italic;margin-top:8px;}
+
+.p2-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.p2-item{background:#fff;border:1px solid #E8ECF2;border-radius:12px;padding:10px 12px;display:flex;align-items:flex-start;gap:8px;}
+.p2-dot{width:6px;height:6px;border-radius:50%;background:#CBD5E1;flex-shrink:0;margin-top:5px;}
+.p2-name{font-size:12px;font-weight:600;color:#475569;}
+.p2-desc{font-size:11px;color:#94A3B8;margin-top:1px;}
+
+.defer-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#FFFEF7;border:1px dashed #FCD34D;border-radius:12px;margin-bottom:6px;gap:12px;}
+.defer-name{font-size:13px;font-weight:600;color:#92400E;}
+.defer-tag{font-size:11px;color:#B45309;margin-top:1px;}
+.defer-btn{font-size:11px;font-weight:600;color:#059669;border:1px solid #A7F3D0;background:#ECFDF5;border-radius:8px;padding:5px 10px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+
+.summary-card{background:#0F172A;border-radius:20px;padding:22px;}
+.summary-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.summary-label{font-size:13px;color:#94A3B8;}
+.summary-val{font-size:13px;font-weight:700;color:#fff;}
+.summary-divider{border:none;border-top:1px solid #1E293B;margin:14px 0;}
+.milestone-row{display:flex;justify-content:space-between;font-size:12px;color:#64748B;margin-bottom:6px;}
+.milestone-val{color:#94A3B8;font-weight:600;}
+.summary-total-label{font-size:10px;color:#64748B;text-transform:uppercase;letter-spacing:.08em;}
+.summary-total-val{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#fff;margin-top:3px;}
+
+.comment-area{width:100%;padding:14px;border-radius:14px;border:1.5px solid #E2E8F0;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:#0F172A;resize:none;outline:none;background:#fff;transition:border-color .2s;line-height:1.6;}
+.comment-area:focus{border-color:var(--accent);}
+.disclaimer{padding:14px 16px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:14px;display:flex;gap:10px;line-height:1.6;}
+.disclaimer-text{font-size:12px;color:#78350F;}
+.gen-btn{width:100%;padding:16px;border-radius:14px;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;background:var(--accent);transition:opacity .2s;}
+.gen-btn:hover{opacity:.87;}
+
+.footer-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid #E8ECF2;z-index:20;padding:10px 16px 14px;}
+.footer-inner{max-width:700px;margin:0 auto;display:flex;align-items:center;gap:10px;}
+.footer-total-label{font-size:10px;color:#94A3B8;}
+.footer-total-val{font-size:20px;font-weight:800;color:#0F172A;line-height:1;}
+.footer-total-mo{font-size:11px;color:#94A3B8;}
+.footer-tag{font-size:11px;font-weight:600;padding:4px 10px;border-radius:8px;background:var(--accent-light);color:var(--accent);white-space:nowrap;}
+.footer-spacer{flex:1;}
+
+.admin-trigger{position:fixed;bottom:70px;right:16px;width:30px;height:30px;border:none;background:transparent;cursor:pointer;opacity:.1;transition:opacity .25s;display:flex;align-items:center;justify-content:center;z-index:25;border-radius:8px;}
+.admin-trigger:hover{opacity:.5;background:#F1F5F9;}
+
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,0);transition:background .3s;pointer-events:none;z-index:40;}
+.backdrop.open{background:rgba(0,0,0,.45);pointer-events:auto;}
+
+.sheet{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:24px 24px 0 0;z-index:50;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,0,.67,0);display:flex;flex-direction:column;max-height:93vh;}
+.sheet.open{transform:translateY(0);transition:transform .35s cubic-bezier(.22,1,.36,1);}
+.sheet-handle{flex-shrink:0;display:flex;justify-content:center;padding:12px 0 6px;}
+.sheet-handle-bar{width:36px;height:4px;border-radius:99px;background:#E2E8F0;}
+.sheet-header{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px 14px;border-bottom:1px solid #F1F5F9;}
+.sheet-title{font-size:16px;font-weight:700;color:#0F172A;}
+.sheet-close{width:30px;height:30px;border:none;background:#F1F5F9;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.sheet-body{flex:1;overflow-y:auto;padding:20px;-webkit-overflow-scrolling:touch;}
+
+.detail-price-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.detail-price-badge{padding:10px 14px;border-radius:12px;flex:1;min-width:100px;}
+.detail-price-badge-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.detail-price-badge-val{font-size:18px;font-weight:800;}
+.detail-meta{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.detail-meta-chip{padding:8px 12px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;flex:1;min-width:130px;}
+.detail-meta-chip-label{font-size:10px;color:#94A3B8;margin-bottom:2px;}
+.detail-meta-chip-val{font-size:12px;font-weight:600;color:#374151;line-height:1.4;}
+.detail-desc{font-size:13px;color:#475569;line-height:1.75;}
+.detail-desc p{margin-bottom:8px;}
+.detail-desc .bullet{display:flex;gap:8px;margin-bottom:4px;}
+.detail-desc .bullet-dot{color:#CBD5E1;flex-shrink:0;}
+.detail-note{margin-top:14px;padding:12px 14px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;font-size:12px;color:#78350F;line-height:1.5;}
+
+.pin-overlay{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0);pointer-events:none;transition:background .2s;}
+.pin-overlay.open{background:rgba(0,0,0,.5);pointer-events:auto;}
+.pin-modal{background:#fff;border-radius:24px;padding:28px 24px;width:310px;transform:scale(.94) translateY(10px);opacity:0;pointer-events:none;transition:all .22s;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.18);}
+.pin-overlay.open .pin-modal{transform:scale(1) translateY(0);opacity:1;pointer-events:auto;}
+.pin-icon-wrap{width:48px;height:48px;border-radius:16px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
+.pin-title{font-size:17px;font-weight:700;color:#0F172A;margin-bottom:4px;}
+.pin-sub{font-size:12px;color:#94A3B8;margin-bottom:18px;}
+.pin-dots{display:flex;justify-content:center;gap:12px;margin-bottom:18px;}
+.pin-dot{width:13px;height:13px;border-radius:50%;background:#E2E8F0;transition:background .15s;}
+.pin-dot.filled{background:#0F172A;}
+.pin-dot.error{background:#EF4444;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
+.shake{animation:shake .4s ease;}
+.pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
+.pin-key{height:50px;border:none;background:#F8FAFC;border-radius:12px;font-size:19px;font-weight:600;color:#0F172A;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .1s;}
+.pin-key:hover{background:#EEF2F7;}
+.pin-key:active{background:#E2E8F0;}
+.pin-key.empty{background:transparent;pointer-events:none;}
+.pin-key.del{font-size:15px;color:#64748B;}
+.pin-cancel{font-size:13px;color:#94A3B8;border:none;background:transparent;cursor:pointer;padding:6px 16px;font-family:'Plus Jakarta Sans',sans-serif;}
+.pin-cancel:hover{color:#64748B;}
+
+.admin-tabs{display:flex;border-bottom:1px solid #F1F5F9;padding:0 16px;overflow-x:auto;flex-shrink:0;}
+.admin-tab{padding:10px 12px;font-size:12px;font-weight:600;color:#94A3B8;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif;}
+.admin-tab.active{color:#0F172A;border-bottom-color:#0F172A;}
+.admin-body{padding:14px 16px 110px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;}
+.admin-feat-card{background:#F8FAFC;border-radius:12px;padding:14px;margin-bottom:10px;}
+.admin-feat-name{font-size:13px;font-weight:700;color:#0F172A;margin-bottom:10px;}
+.admin-price-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.admin-price-label{font-size:11px;font-weight:600;margin-bottom:5px;display:block;}
+.admin-price-input{width:100%;padding:9px 12px;border:1.5px solid #E2E8F0;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:#0F172A;background:#fff;outline:none;transition:border-color .2s;}
+.admin-price-input:focus{border-color:#0F172A;}
+.admin-save-bar{position:absolute;bottom:0;left:0;right:0;padding:14px 16px;background:#fff;border-top:1px solid #F1F5F9;}
+.admin-save-btn{width:100%;padding:14px;border-radius:12px;border:none;background:#0F172A;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;}
+.admin-save-btn:hover{opacity:.87;}
+.admin-save-btn.saved{background:#059669;}
+.admin-reset-btn{padding:10px 16px;border-radius:10px;border:1.5px solid #FECACA;background:#FFF5F5;color:#DC2626;font-size:13px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
+.admin-reset-btn:hover{background:#FEE2E2;}
+.admin-section-note{font-size:12px;color:#94A3B8;margin-bottom:12px;line-height:1.5;}
+
+/* Plan detail in sheet */
+.plan-detail-section{margin-bottom:16px;}
+.plan-detail-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.plan-detail-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;font-size:13px;color:#475569;line-height:1.5;}
+.plan-detail-check{flex-shrink:0;margin-top:2px;}
+
+/* ─── PRINT STYLES ─────────────────────────────────────── */
+@media print {
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { background: #fff; }
+  .no-print, .header, .footer-bar, .admin-trigger, .backdrop, .sheet, .pin-overlay { display: none !important; }
+  .wrap { padding: 0; max-width: 100%; }
+  .print-only { display: block !important; }
+  .print-page { page-break-inside: avoid; }
+}
+.print-only { display: none; }
+
+/* Print view styles */
+.pv-header { border-bottom: 2px solid #0F172A; padding-bottom: 16px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-start; }
+.pv-company { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: #0F172A; }
+.pv-sub { font-size: 12px; color: #64748B; margin-top: 3px; }
+.pv-quote-no { text-align: right; }
+.pv-quote-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: #94A3B8; }
+.pv-quote-val { font-size: 13px; font-weight: 700; color: #0F172A; margin-top: 2px; }
+.pv-option-badge { display: inline-block; padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; margin-top: 12px; }
+.pv-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
+.pv-table th { background: #F8FAFC; text-align: left; padding: 8px 10px; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: #64748B; border-bottom: 1px solid #E2E8F0; }
+.pv-table td { padding: 9px 10px; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
+.pv-table tr:last-child td { border-bottom: none; }
+.pv-table td:last-child { text-align: right; font-weight: 700; white-space: nowrap; }
+.pv-cat-row td { background: #F8FAFC; font-weight: 700; font-size: 11px; color: #374151; padding: 6px 10px; }
+.pv-total-row { background: #0F172A; }
+.pv-total-row td { color: #fff !important; font-weight: 800 !important; font-size: 14px !important; padding: 12px 10px !important; border: none !important; }
+.pv-section-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; color: #0F172A; margin: 16px 0 8px; }
+.pv-disclaimer { font-size: 10px; color: #94A3B8; line-height: 1.6; border-top: 1px solid #E2E8F0; padding-top: 12px; margin-top: 16px; }
+.pv-milestone-row { display: flex; justify-content: space-between; font-size: 12px; color: #64748B; padding: 5px 0; border-bottom: 1px solid #F1F5F9; }
+
+@media (max-width: 480px) {
+  .project-title { font-size: 18px; }
+  .total-amount { font-size: 21px; }
+  .maint-grid { grid-template-columns: 1fr; }
+  .p2-grid { grid-template-columns: 1fr; }
+  .admin-price-grid { grid-template-columns: 1fr; }
+  .detail-price-badge { min-width: 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header no-print">
+  <div class="header-inner">
+    <div class="header-top">
+      <div>
+        <div class="project-label">Project Estimate · Phase 1</div>
+        <div class="project-title serif">eCommerce Website</div>
+        <div class="project-sub">Hardware Store, Rampurhat &nbsp;·&nbsp; <span id="headerDate"></span></div>
+      </div>
+      <div class="total-badge">
+        <div class="total-label">Est. One-Time</div>
+        <div class="total-amount" id="headerTotal">—</div>
+        <div class="total-monthly" id="headerMonthly">+ — /mo</div>
+      </div>
+    </div>
+    <div class="option-toggle">
+      <button class="opt-btn active" id="btn-shopify" onclick="setOption('shopify')">
+        <span class="opt-btn-label">Shopify</span>
+        <span class="opt-btn-sub">Platform + Apps</span>
+      </button>
+      <button class="opt-btn" id="btn-custom" onclick="setOption('custom')">
+        <span class="opt-btn-label">Custom Build</span>
+        <span class="opt-btn-sub">WooCommerce + VPS</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="wrap" style="padding-top:16px;">
+  <div id="featuresContainer"></div>
+
+  <div class="section">
+    <div class="sec-title serif">Recurring Costs</div>
+    <div class="sec-sub">Ongoing platform, tools &amp; infrastructure — billed monthly unless noted.</div>
+    <div class="card" id="recurringContainer"></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title serif">Maintenance Plan</div>
+    <div class="sec-sub">Select a plan for ongoing upkeep. New features &amp; development are always quoted separately.</div>
+    <div class="maint-grid" id="maintContainer"></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title serif">Catalog Work <small style="font-size:13px;font-weight:400;color:#94A3B8;font-family:'Plus Jakarta Sans',sans-serif">(Billed Separately)</small></div>
+    <div class="sec-sub">Volume-based — scales directly with your product count. Highly labour-intensive.</div>
+    <div class="card" id="catalogContainer"></div>
+    <div class="catalog-note">Tip: Launch with your top 50–100 bestsellers first, then schedule monthly shoot days for the rest. This keeps launch costs manageable and gets you live faster.</div>
+  </div>
+
+  <div class="section" id="deferredSection" style="display:none;">
+    <div class="sec-title serif">Deferred to Phase 2</div>
+    <div class="sec-sub">Features you've pushed out — will be scoped &amp; quoted after Phase 1 is live.</div>
+    <div id="deferredContainer"></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title serif">What's Coming in Phase 2</div>
+    <div class="sec-sub">Future capabilities planned after your store is live and performing well.</div>
+    <div class="p2-grid" id="phase2PreviewContainer"></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title serif">Estimate Summary</div>
+    <div class="summary-card" id="summaryContent"></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title serif">Your Notes</div>
+    <div class="sec-sub">Any additional requirements, questions, or features not listed above.</div>
+    <textarea id="clientComments" class="comment-area" rows="4" placeholder="E.g. We have products that require bulk-ordering, minimum quantities, or contractor pricing..."></textarea>
+  </div>
+
+  <div class="section">
+    <div class="disclaimer">
+      <span style="font-size:18px;flex-shrink:0;margin-top:-1px;">⚠️</span>
+      <div class="disclaimer-text"><strong>Please note:</strong> This is a preliminary estimate, not a final quotation. Pricing may vary based on scope changes or complexity discovered during the project. All prices are in INR and include our service fees but exclude GST, domain registration cost, Shopify theme purchase, and third-party transaction fees (Razorpay 2%). Payment milestones shown are indicative.</div>
+    </div>
+  </div>
+
+  <button class="gen-btn no-print" onclick="generatePDF()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Generate Quote (PDF)
+  </button>
+  <div style="height:10px;"></div>
+</div>
+
+<!-- PRINT VIEW -->
+<div class="print-only" id="printView"></div>
+
+<!-- STICKY FOOTER -->
+<div class="footer-bar no-print">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-total-label">Selected features (one-time)</div>
+      <div class="footer-total-val" id="footerTotal">—</div>
+      <div class="footer-total-mo" id="footerMonthly">+ — /month</div>
+    </div>
+    <div class="footer-spacer"></div>
+    <div class="footer-tag" id="footerTag">Shopify</div>
+  </div>
+</div>
+
+<!-- HIDDEN ADMIN TRIGGER -->
+<button class="admin-trigger no-print" onclick="openPinModal()" title="Admin">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+</button>
+
+<!-- BACKDROP -->
+<div class="backdrop" id="backdrop" onclick="closeAllSheets()"></div>
+
+<!-- FEATURE DETAIL SHEET -->
+<div class="sheet" id="detailSheet">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header">
+    <div class="sheet-title" id="detailSheetTitle"></div>
+    <button class="sheet-close" onclick="closeSheet('detailSheet')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="sheet-body" id="detailSheetBody"></div>
+</div>
+
+<!-- MAINTENANCE PLAN DETAIL SHEET -->
+<div class="sheet" id="planSheet">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header">
+    <div class="sheet-title" id="planSheetTitle"></div>
+    <button class="sheet-close" onclick="closeSheet('planSheet')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="sheet-body" id="planSheetBody"></div>
+</div>
+
+<!-- ADMIN SHEET -->
+<div class="sheet" id="adminSheet" style="max-height:96vh;">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header">
+    <div class="sheet-title">⚙️ Admin — Price Configuration</div>
+    <button class="sheet-close" onclick="closeSheet('adminSheet')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="admin-tabs" id="adminTabs">
+    <button class="admin-tab active" onclick="setAdminTab('features')">Features</button>
+    <button class="admin-tab" onclick="setAdminTab('recurring')">Recurring</button>
+    <button class="admin-tab" onclick="setAdminTab('catalog')">Catalog</button>
+    <button class="admin-tab" onclick="setAdminTab('maintenance')">Maintenance</button>
+    <button class="admin-tab" onclick="setAdminTab('settings')">Settings</button>
+  </div>
+  <div class="admin-body" id="adminBody"></div>
+  <div class="admin-save-bar">
+    <button class="admin-save-btn" id="adminSaveBtn" onclick="saveAdmin()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Save All Changes
+    </button>
+  </div>
+</div>
+
+<!-- PIN MODAL -->
+<div class="pin-overlay" id="pinOverlay" onclick="handlePinBackdrop(event)">
+  <div class="pin-modal">
+    <div class="pin-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <div class="pin-title">Admin Access</div>
+    <div class="pin-sub">Enter your 4-digit PIN</div>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinKey('1')">1</button>
+      <button class="pin-key" onclick="pinKey('2')">2</button>
+      <button class="pin-key" onclick="pinKey('3')">3</button>
+      <button class="pin-key" onclick="pinKey('4')">4</button>
+      <button class="pin-key" onclick="pinKey('5')">5</button>
+      <button class="pin-key" onclick="pinKey('6')">6</button>
+      <button class="pin-key" onclick="pinKey('7')">7</button>
+      <button class="pin-key" onclick="pinKey('8')">8</button>
+      <button class="pin-key" onclick="pinKey('9')">9</button>
+      <button class="pin-key empty"></button>
+      <button class="pin-key" onclick="pinKey('0')">0</button>
+      <button class="pin-key del" onclick="pinDel()">⌫</button>
+    </div>
+    <button class="pin-cancel" onclick="closePinModal()">Cancel</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════════════
+const CATS=[
+  {id:'brand',l:'Brand & Foundation',ic:'🎨',c:'#7C3AED',bg:'#FAF5FF'},
+  {id:'store',l:'Store Design & Setup',ic:'🖥️',c:'#0369A1',bg:'#F0F9FF'},
+  {id:'products',l:'Products & Catalog',ic:'🏷️',c:'#0F766E',bg:'#F0FDFA'},
+  {id:'customer',l:'Customer Experience',ic:'👤',c:'#B45309',bg:'#FFFBEB'},
+  {id:'payments',l:'Payments',ic:'💳',c:'#15803D',bg:'#F0FDF4'},
+  {id:'shipping',l:'Shipping & Logistics',ic:'🚚',c:'#1D4ED8',bg:'#EFF6FF'},
+  {id:'compliance',l:'GST & Compliance',ic:'📄',c:'#9D174D',bg:'#FFF1F2'},
+  {id:'notifications',l:'Notifications',ic:'🔔',c:'#EA580C',bg:'#FFF7ED'},
+  {id:'operations',l:'Operations & Admin',ic:'📊',c:'#374151',bg:'#F8FAFC'},
+  {id:'launch',l:'Testing & Launch',ic:'🚀',c:'#6D28D9',bg:'#FDF4FF'},
+];
+
+const DEF_F=[
+  {id:'brand-id',cat:'brand',n:'Brand Identity',tag:'Logo, colors & visual language',
+   sd:'Professional logo in all formats, brand color palette, typography selection, and a mini brand guide document.',
+   fd:'We design your logo across all required formats — PNG, SVG, PDF, ICO, WebP — for web, print, social media, and WhatsApp.\n\n• Brand color palette: primary, secondary, and accent colors with HEX codes\n• Typography pair: heading font + body font selection\n• Mini brand guide PDF — a reference document so all future work stays consistent\n\nYour logo will appear on your website, invoices, WhatsApp messages, email notifications, and packaging. Getting this right now prevents expensive reworks later.\n\nDeliverables: Logo (5 formats) · Color Palette · Typography · Brand Guide PDF',
+   eff:'8–12 hours',tl:'3–5 business days',ps:12000,pc:12000,phase:1,inc:true,push:false,so:false,co:false},
+  {id:'domain',cat:'brand',n:'Domain & SSL Setup',tag:'Your permanent address on the internet',
+   sd:'Domain purchase, DNS configuration, domain privacy protection, and SSL certificate — the invisible foundation of customer trust.',
+   fd:'Complete domain setup:\n\n• Domain name selection and purchase (.com or .in)\n• DNS configuration pointing to your store\n• Domain privacy protection — your personal contact details stay off public WHOIS records\n• SSL certificate (the padlock) — browsers show "Not Secure" on sites without SSL, instantly killing customer trust\n• Email forwarding: info@yourdomain.com → your existing inbox\n\nNote: Domain registration cost (₹800–1,200/year) is billed at actuals, not included in the setup fee above.',
+   eff:'1–2 hours',tl:'1 business day',ps:3000,pc:3000,phase:1,inc:true,push:false,so:false,co:false},
+  {id:'store-foundation',cat:'store',n:'Store Foundation & Configuration',tag:'Platform setup, tax config, legal pages',
+   sd:'Account setup, tax settings, shipping zones, currency, and all required legal pages — the invisible backbone before any product goes live.',
+   fd:'Before a single product can be listed, substantial foundational configuration must happen:\n\n• Platform account and plan activation\n• Store settings: business name, address, currency, timezone\n• Tax configuration: CGST/SGST for intra-state, IGST for inter-state — correctly mapped\n• Shipping zones by region and weight rules\n• Legal pages: Terms & Conditions, Refund Policy, Privacy Policy (legally required for all eCommerce)\n• Google Analytics and Search Console integration\n• Favicon, meta title/description, SEO baseline\n\nFor Custom Build: WordPress + WooCommerce installation on the server, all plugin setup, WooCommerce wizard configuration, and environment security hardening.',
+   eff:'Shopify: 3–5 hrs / Custom: 5–8 hrs',tl:'1–2 business days',ps:6000,pc:10000,phase:1,inc:true,push:false,so:false,co:false},
+  {id:'hosting',cat:'store',n:'Hosting Infrastructure Setup',tag:'Dedicated cloud server, configured & secured',
+   sd:'A VPS server running exclusively for your store — dedicated resources, daily backups, CDN, and firewall. Custom Build only.',
+   fd:'Applicable to Custom Build only — Shopify handles hosting internally.\n\nWe provision and configure a dedicated VPS:\n\n• Server: Hetzner or DigitalOcean — reliable, cost-efficient\n• OS: Ubuntu 22.04 LTS with Nginx web server\n• PHP and MySQL tuned for WooCommerce performance\n• SSL: Let\'s Encrypt (free, auto-renewing)\n• CDN: Cloudflare free tier — faster loads across India\n• Automated daily backups to a separate location\n• UFW firewall, security rules\n• SMTP relay for transactional emails\n• Server uptime monitoring with alerts\n\nYour VPS runs ONLY your store — no shared resources, no slowdowns from other sites.',
+   eff:'5–8 hours',tl:'1–2 business days',ps:0,pc:10000,phase:1,inc:true,push:false,so:false,co:true},
+  {id:'ui-design',cat:'store',n:'UI Design & Theme Development',tag:'Every screen — branded, beautiful & built to convert',
+   sd:'Your store will not look like a template. Every screen is designed to your brand and optimised to turn visitors into buyers.',
+   fd:'SHOPIFY: Premium theme selection and deep customisation of every template:\n• Homepage: hero, featured categories, bestsellers grid, trust badges\n• Category and product listing pages with filter sidebar\n• Product detail pages: image gallery, variant selector, add to cart, related products\n• Cart, checkout, order confirmation — all branded\n• About, Contact, FAQ pages\n• Mobile QA on real devices\n• Premium theme cost (₹5,000–8,000) is additional to setup fees.\n\nCUSTOM BUILD: Full Figma design first — every screen approved before code is written:\n• Mobile-first design for all screens\n• Homepage, category listing, product detail, cart, checkout, customer portal\n• Micro-interactions and hover states designed\n• Pixel-perfect implementation as a custom WordPress theme\n\nDesign directly impacts conversion rate. A well-designed store reduces bounce rate and builds instant trust.',
+   eff:'Shopify: 18–25 hrs / Custom: 50–65 hrs',tl:'Shopify: 5–7 days / Custom: 10–14 days',ps:22000,pc:55000,phase:1,inc:true,push:false,so:false,co:false},
+  {id:'nav',cat:'store',n:'Category & Navigation Architecture',tag:'How customers find what they\'re looking for',
+   sd:'15–25 categories planned around customer thinking — with smart filters, live search, and intuitive navigation.',
+   fd:'Poor navigation is the silent killer of eCommerce sales. We plan and build:\n\n• Category hierarchy: 15–25 categories with subcategories, planned around how customers ask for products\n• Navigation style: mega-menu or sidebar based on your product range\n• Smart filter system: by brand, size, price range, availability, material\n• Live search with autocomplete suggestions\n• Breadcrumb navigation on all inner pages\n• Category landing pages with banners and descriptions\n• "Shop by Brand" shortcut sections on homepage\n\nThe structure is designed around how customers search — not how products appear in your stockroom.',
+   eff:'5–8 hours',tl:'2–3 business days',ps:8000,pc:8000,phase:1,inc:true,push:false,so:false,co:false},
+  {id:'variants',cat:'products',n:'Product Variants & Attribute System',tag:'Size, color, brand — every combination tracked',
+   sd:'Products across multiple variants — each combination gets its own SKU, price, stock count, and image.',
+   fd:'Hardware catalogs are inherently complex. One bearing in 5 sizes × 3 brands = 15 variants. Each requires:\n\n• Its own SKU (stock-keeping unit)\n• Its own price or price modifier\n• Its own stock count\n• Its own image (where applicable)\n\nWe configure the full variant system:\n• All attribute types: Size, Color, Brand, Material, Finish, etc.\n• Complete variant matrix for all combinations\n• Variant-specific pricing\n• Variant image linking (selecting "Blue" shows the blue product image)\n• "Unavailable" variant display — crossed out, not silently hidden\n• Bulk variant editing capability\n\nFor 200–500 products with 2–3 variants: 400–1,500 individual SKUs. Done wrong, this causes inventory mismatches and wrong items being shipped.',
+   eff:'Shopify: 4–6 hrs / Custom: 8–12 hrs',tl:'2–3 business days',ps:5000,pc:12000,phase:1,inc:true,push:false,so:false,co:false},
+  {id:'cart',cat:'customer',n:'Cart & Checkout Flow',tag:'The path from browse to buy, friction-free',
+   sd:'Streamlined checkout — cart drawer, multi-step flow, guest option, coupon support — designed to convert browsers into buyers.',
+   fd:'Cart abandonment in Indian eCommerce averages 70–80%. Every point of friction loses a sale. We optimise:\n\n• Cart drawer: add to cart without leaving the current page\n• Cart page with quantity editing and clear price breakdown\n• Multi-step checkout: personal info → shipping → payment\n• Guest checkout — no forced account creation\n• Saved address autofill for returning customers\n• Real-time shipping rate at checkout\n• Coupon and discount code field\n• Order summary always visible throughout checkout\n• Mobile keyboard optimisation (number pad for phone, email keyboard for email)\n\nFor Custom Build: fully designed checkout UI in your brand, plus payment failure recovery and retry flow.',
+   eff:'Shopify: 4–6 hrs / Custom: 10–14 hrs',tl:'2–3 business days',ps:5000,pc:14000,phase:1,inc:true,push:false,so:false,co:false},
+  {id:'accounts',cat:'customer',n:'Customer Accounts & Portal',tag:'Where repeat buyers call home',
+   sd:'Registration, login, profile management, address book, and complete order history — what turns one-time buyers into loyal customers.',
+   fd:'Customer accounts make the second purchase effortless:\n\n• Registration with email + OTP verification\n• Login with Forgot Password recovery\n• Profile: name, phone, email — fully editable\n• Address book: save multiple delivery addresses, set default\n• Order history: all orders with status, items, amounts, and tracking links\n• Downloadable GST invoices from order history\n\nWhen a customer\'s address is saved and they can reorder in 30 seconds, repeat purchases happen naturally. When they have to re-enter everything, many don\'t bother.',
+   eff:'Shopify: 3–5 hrs / Custom: 8–12 hrs',tl:'2–3 business days',ps:5000,pc:10000,phase:1,inc:true,push:false,so:false,co:false},
+  {id:'wishlist',cat:'customer',n:'Wishlist',tag:'Save for later — convert later',
+   sd:'Customers save products, return without searching again, and add the whole wishlist to cart in one click.',
+   fd:'Hardware purchases often require approval — a contractor checks with a client, a buyer needs budget sign-off. A wishlist solves this.\n\n• Heart icon on every product card — one click to save\n• Dedicated wishlist page in the customer account\n• Shareable wishlist link — useful for B2B: "share this list with your client"\n• Bulk add-to-cart from the wishlist\n• Wishlist count visible in header navigation\n\nShopify: requires a third-party app (₹300–500/month — see Recurring Costs)\nCustom: built into the system at no additional monthly charge\n\nThis feature can be safely deferred to Phase 2 without affecting any other functionality.',
+   eff:'Shopify: 2–4 hrs / Custom: 5–8 hrs',tl:'1–2 business days',ps:4000,pc:7000,phase:1,inc:true,push:true,so:false,co:false},
+  {id:'order-track',cat:'customer',n:'Order History & Live Tracking',tag:'Customers always know where their order is',
+   sd:'Real-time courier tracking inside the customer account — eliminates the most common support query: "Where is my order?"',
+   fd:'Once an order is dispatched, customers can:\n\n• Log in and see all past and active orders\n• View full order details: items, amounts, delivery address\n• See live tracking status from the courier — Picked Up → In Transit → Out for Delivery → Delivered\n• Click the tracking number to open the courier\'s tracking page\n• Download their GST invoice\n\nFor Custom Build, tracking status updates via webhooks — fully real-time, no manual refresh. This single feature eliminates the bulk of post-purchase support queries.',
+   eff:'Shopify: 2–3 hrs / Custom: 5–7 hrs',tl:'1–2 business days',ps:4000,pc:5000,phase:1,inc:true,push:false,so:false,co:false},
+  {id:'razorpay',cat:'payments',n:'Razorpay Payment Integration',tag:'UPI, cards, netbanking, wallets, EMI — all covered',
+   sd:'All payment modes activated and tested. Business KYC and onboarding guided step by step — no delays at launch.',
+   fd:'India\'s most trusted payment gateway, fully integrated:\n\n• Razorpay business account creation\n• KYC document guidance: GSTIN, PAN, cancelled cheque, business address proof\n• All payment modes: UPI (GPay, PhonePe, Paytm), credit/debit cards, net banking, wallets, EMI\n• Test transactions across all modes before go-live\n• Webhooks for real-time, reliable payment status updates\n• Payment failure handling and retry flow\n• Razorpay dashboard walkthrough\n\nKYC processing typically takes 5–7 business days. We initiate this on Day 1 alongside design work so it never delays the launch.\n\nNote: Razorpay charges 2% per transaction. No monthly fee from Razorpay.',
+   eff:'Shopify: 4–6 hrs / Custom: 10–14 hrs',tl:'2–3 days (+ 5–7 days KYC)',ps:8000,pc:14000,phase:1,inc:true,push:false,so:false,co:false},
+  {id:'shiprocket',cat:'shipping',n:'Shiprocket Shipping Integration',tag:'Rates, serviceability, auto-dispatch & live tracking',
+   sd:'Automated end-to-end shipping: real-time rates at checkout, pincode check, AWB generation, and live tracking — zero manual effort.',
+   fd:'Shiprocket connects you to 25+ courier partners (Delhivery, Blue Dart, DTDC, Ekart, Xpressbees, and more) under one integration.\n\nWe automate the full shipping lifecycle:\n• Real-time shipping rate at checkout based on product weight + destination pincode\n• Pincode serviceability check before customers add to cart — no surprises at checkout\n• Automatic order push to Shiprocket immediately after payment\n• Optimal courier auto-selection based on rate and reliability\n• AWB (tracking number) auto-generated\n• Webhook-driven tracking status updates inside the customer account\n• Order cancellation and return initiation flow\n• Shiprocket account onboarding assistance\n\nFor hardware stores with heavy/bulky items: we configure product weights and dimensions per category carefully. Wrong weights = wrong rates = either unhappy customers or shipping losses.',
+   eff:'Shopify: 6–8 hrs / Custom: 12–16 hrs',tl:'3–4 business days',ps:14000,pc:20000,phase:1,inc:true,push:false,so:false,co:false},
+  {id:'gst',cat:'compliance',n:'GST & Invoice Automation',tag:'Every order, a compliant invoice — automatically',
+   sd:'GST-compliant invoices auto-generated for every order — no manual billing, no compliance gaps.',
+   fd:'Under GST law, every online B2C sale requires a proper tax invoice. We automate the entire process:\n\n• GST calculation engine: CGST+SGST for intra-state, IGST for inter-state — determined automatically by the customer\'s state\n• HSN code mapping for your product categories (hardware: 7318, 8302, 8482, etc. — we configure all of these)\n• GSTIN correctly displayed on all invoices\n• Auto-incremented invoice number sequence\n• PDF invoice generated immediately after successful payment\n• Invoice automatically attached to the order confirmation email\n• Invoice downloadable from the customer\'s account order history\n• Tax-inclusive vs tax-exclusive price display toggle\n\nFor Custom Build: server-side PDF generation in your brand design — not a generic invoice template.',
+   eff:'Shopify: 4–6 hrs / Custom: 10–14 hrs',tl:'2–3 business days',ps:7000,pc:14000,phase:1,inc:true,push:false,so:false,co:false},
+  {id:'whatsapp',cat:'notifications',n:'WhatsApp Order Notifications',tag:'The most-opened channel in India — fully automated',
+   sd:'Automated WhatsApp messages at every order milestone — confirmed, dispatched, out for delivery, delivered.',
+   fd:'WhatsApp messages in India have 90%+ open rates vs. 20–30% for email. The most effective notification channel, with zero manual effort.\n\nWe configure automated messages for:\n• Order placed (order ID, items, amount)\n• Payment confirmed\n• Dispatched (AWB + tracking link)\n• Out for delivery\n• Delivered\n• Cancellation (if applicable)\n\nPlatform: Interakt or WATI (WhatsApp Business API). Monthly platform cost is separate — see Recurring Costs.\n\nPrerequisite: Facebook Business Manager verification, typically 3–5 business days. We initiate this on Day 1 alongside Razorpay KYC.\n\nCan be safely deferred to Phase 2 if needed.',
+   eff:'Shopify: 4–6 hrs / Custom: 10–14 hrs',tl:'2–3 days (+ WA API approval)',ps:9000,pc:14000,phase:1,inc:true,push:true,so:false,co:false},
+  {id:'email',cat:'notifications',n:'Email Notification System',tag:'Your brand in every inbox, for every order event',
+   sd:'Branded transactional emails for every trigger — order confirmation, dispatch, delivery, account creation, password reset.',
+   fd:'Every significant order event triggers a professionally branded email:\n\n• Order confirmation with items, amounts, and delivery address\n• Payment received confirmation\n• Order dispatched with AWB and tracking link\n• Order delivered\n• Account welcome email for new registrations\n• Password reset flow\n\nShopify: customised within Shopify\'s email system — your logo, brand colors, and brand language throughout.\nCustom: fully custom HTML email templates via Brevo SMTP (free up to 300 emails/day) — designed to match your brand identity precisely.\n\nThese emails are the face of your brand in the customer\'s inbox. Every interaction is an impression.\n\nCan be deferred to Phase 2 if budget is a concern (basic system notifications still work).',
+   eff:'Shopify: 3–5 hrs / Custom: 6–8 hrs',tl:'2–3 business days',ps:5000,pc:8000,phase:1,inc:true,push:true,so:false,co:false},
+  {id:'inventory',cat:'operations',n:'Inventory & Stock Management',tag:'Never oversell. Never lose track.',
+   sd:'Variant-level stock tracking, auto out-of-stock labels, and low-stock alerts — inventory that manages itself.',
+   fd:'200–500 products with 2–3 variants = 400–1,500 individual SKUs to manage correctly. We configure:\n\n• Variant-level inventory — each size, color, and brand variant tracked separately\n• Automatic "Out of Stock" label when quantity hits zero — no accidental overselling\n• Configurable low-stock threshold alerts (e.g., notify when any SKU drops below 5)\n• Manual stock adjustment for damaged, returned, or lost items\n• Bulk stock update via CSV import\n• Show/hide out-of-stock products on the storefront — configurable toggle\n\nFor Custom Build: full inventory audit log — who changed what stock level, and when.',
+   eff:'Shopify: 2–4 hrs / Custom: 6–10 hrs',tl:'1–2 business days',ps:4000,pc:10000,phase:1,inc:true,push:false,so:false,co:false},
+  {id:'admin',cat:'operations',n:'Admin Panel & Order Management',tag:'Your operational command centre',
+   sd:'A clean admin panel for managing orders, updating products, and tracking operations — designed for your actual workflow.',
+   fd:'Shopify: Comprehensive admin included by default. We configure dashboard views for your workflow, set up staff accounts with appropriate permissions, and provide a full operational walkthrough.\n\nCustom Build: A purpose-built admin interface:\n• Order management: view all orders, filter by status, mark as packed, push to Shiprocket, print packing slips\n• Product management: add, edit, delete products; update stock; manage variants\n• Customer view: full order history per customer\n• Basic reporting: daily orders, revenue, top products, low-stock alerts\n• Staff accounts with role-based access control\n\nSince the client does not want to manage the store themselves, this panel is your operational layer — built for speed.',
+   eff:'Shopify: 2–4 hrs / Custom: 10–14 hrs',tl:'Shopify: 1 day / Custom: 4–5 days',ps:3000,pc:14000,phase:1,inc:true,push:false,so:false,co:false},
+  {id:'testing',cat:'launch',n:'Testing, QA & Go-Live',tag:'Nothing ships until every flow is tested',
+   sd:'End-to-end testing of every flow — payments, shipping, notifications, order lifecycle — across all devices before launch.',
+   fd:'A structured QA checklist before any store goes live:\n\nPayments: All payment modes tested (UPI, card, netbanking), payment failure and retry flow, Razorpay → Shiprocket order sync confirmed.\n\nShipping: Rate calculation for multiple pincodes, serviceability for unserviced areas, AWB generation, tracking updates.\n\nNotifications: All WhatsApp flows, all email flows, invoice generation and email delivery.\n\nCustomer Flows: Registration, login, forgot password, checkout, order history, invoice download.\n\nCross-Device Testing: Android Chrome + iOS Safari (real devices), tablet, desktop — Chrome, Firefox, Safari, Edge.\n\nGo-Live: DNS switch and propagation monitoring, launch-day monitoring for 24 hours, post-launch checklist verification, handover session with you.',
+   eff:'Shopify: 10–14 hrs / Custom: 15–20 hrs',tl:'3–5 business days',ps:6000,pc:10000,phase:1,inc:true,push:false,so:false,co:false},
+];
+
+const DEF_R=[
+  {id:'shopify-plan',n:'Shopify Basic Plan',d:'Monthly platform subscription — hosting, SSL, 99.99% uptime guarantee, and all core Shopify infrastructure.',ps:2500,pc:0,per:'month',so:true,co:false},
+  {id:'vps',n:'VPS Hosting (Managed)',d:'Dedicated cloud server for your store — includes daily backups, SSL renewal, CDN, and server uptime monitoring.',ps:0,pc:2000,per:'month',so:false,co:true},
+  {id:'wa-platform',n:'WhatsApp Automation Platform',d:'Interakt or WATI — the platform that sends automated WhatsApp order messages to your customers.',ps:1500,pc:2000,per:'month',so:false,co:false},
+  {id:'gst-app',n:'GST Invoice Tool',d:'Monthly app fee for the GST invoice generation app (Shopify only). Included in Custom build at no extra monthly charge.',ps:1000,pc:0,per:'month',so:true,co:false},
+  {id:'wishlist-app',n:'Wishlist Module',d:'Monthly app fee for the Wishlist feature (Shopify only). Included in Custom build at no extra monthly charge.',ps:500,pc:0,per:'month',so:true,co:false},
+  {id:'domain-renew',n:'Domain Renewal',d:'Annual domain name renewal — billed once per year.',ps:1000,pc:1000,per:'year',so:false,co:false},
+];
+
+const DEF_M={
+  a:{n:'Plan A — Essential',ps:3500,pc:4000,
+     inc:['Up to 10 product additions or edits per month','Up to 5 banner or homepage image updates','Bulk price or discount updates','Minor text or content corrections on any page','Platform, plugin and app updates','Basic uptime and payment gateway monitoring','Email support — 48hr response SLA'],
+     exc:['New features, modules, or integrations','New page designs or layouts','Product photography or shoots','Catalog uploads beyond 10 products/month','Graphic design or creative work','Marketing, SEO, ad campaigns, social media']},
+  b:{n:'Plan B — Pro',ps:7000,pc:8000,
+     inc:['Everything in Plan A','Up to 30 product additions or edits per month','Up to 15 banner or creative asset updates','WhatsApp template additions or edits','Monthly performance report (traffic, top products)','Priority support — 24hr response SLA','Minor layout tweaks (no new integrations)','Google Analytics + Search Console monthly review'],
+     exc:['New features, modules, or integrations','Development or programming work of any kind','Product photography or shoots','Catalog uploads beyond 30 products/month','Social media management','Ad campaigns or SEO campaigns','Copywriting, graphic design, video editing']},
+};
+
+const DEF_CAT={photoPerProd:100,photoPerDay:8000,uploadPerProd:45,descPerProd:25};
+const DEF_PIN='1234';
+const P2_FEATURES=[
+  {n:'Cash on Delivery',d:'COD with order verification flow'},
+  {n:'SMS Notifications',d:'For customers without WhatsApp'},
+  {n:'Referral Program',d:'Credits for referring friends'},
+  {n:'Loyalty Points',d:'Earn & redeem on future orders'},
+  {n:'Advanced Analytics',d:'Revenue, CLV, inventory reports'},
+  {n:'AI Support Chatbot',d:'Auto-resolve queries via WhatsApp'},
+  {n:'Multi-language',d:'Bengali + Hindi alongside English'},
+  {n:'Mobile App',d:'Native Android + iOS app'},
+];
+
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+const SK='eq-v3';
+let option='shopify';
+let features=DEF_F.map(f=>({...f}));
+let prices={};
+let recurringPrices={};
+let mPrices={};
+let catalogRates={...DEF_CAT};
+let maintPlan='a';
+let adminPin=DEF_PIN;
+let expandedCats=new Set(CATS.map(c=>c.id));
+let activeAdminTab='features';
+
+// ══════════════════════════════════════════════════════
+//  STORAGE (localStorage for standalone hosting)
+// ══════════════════════════════════════════════════════
+function saveStorage(){
+  try{localStorage.setItem(SK,JSON.stringify({prices,recurringPrices,mPrices,catalogRates,pin:adminPin}));}catch(e){}
+}
+function loadStorage(){
+  try{
+    const s=localStorage.getItem(SK);
+    if(s){const d=JSON.parse(s);
+      if(d.prices)prices=d.prices;
+      if(d.recurringPrices)recurringPrices=d.recurringPrices;
+      if(d.mPrices)mPrices=d.mPrices;
+      if(d.catalogRates)catalogRates={...DEF_CAT,...d.catalogRates};
+      if(d.pin)adminPin=d.pin;}
+  }catch(e){}
+  renderAll();
+}
+
+// ══════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════
+const fmt=v=>v===0?'—':`₹${Number(v).toLocaleString('en-IN')}`;
+function getP(f){const k=f.id+'_'+(option==='shopify'?'ps':'pc');return prices[k]!==undefined?prices[k]:(option==='shopify'?f.ps:f.pc);}
+function getRec(r){const k=r.id+'_'+(option==='shopify'?'ps':'pc');return recurringPrices[k]!==undefined?recurringPrices[k]:(option==='shopify'?r.ps:r.pc);}
+function getMaint(key){const k=key+'_'+(option==='shopify'?'ps':'pc');return mPrices[k]!==undefined?mPrices[k]:(option==='shopify'?DEF_M[key].ps:DEF_M[key].pc);}
+function calcTotals(){
+  const inc=features.filter(f=>f.inc&&f.phase===1&&!(option==='shopify'&&f.co)&&!(option==='custom'&&f.so));
+  const ot=inc.reduce((s,f)=>s+getP(f),0);
+  let mo=0;
+  DEF_R.forEach(r=>{if(option==='shopify'&&r.co)return;if(option==='custom'&&r.so)return;if(r.per==='year')return;mo+=getRec(r);});
+  mo+=getMaint(maintPlan);
+  return{ot,mo};
+}
+function setAccent(a,l){document.documentElement.style.setProperty('--accent',a);document.documentElement.style.setProperty('--accent-light',l);}
+function svgCheck(color='white',size=11){return`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`;}
+function svgChevron(color,cls){return`<svg class="chevron ${cls}" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;}
+
+// ══════════════════════════════════════════════════════
+//  OPTION TOGGLE
+// ══════════════════════════════════════════════════════
+function setOption(opt){
+  option=opt;
+  document.getElementById('btn-shopify').className='opt-btn'+(opt==='shopify'?' active':'');
+  document.getElementById('btn-custom').className='opt-btn'+(opt==='custom'?' active':'');
+  if(opt==='shopify')setAccent('#059669','#ECFDF5'); else setAccent('#4338CA','#EEF2FF');
+  renderAll();
+}
+
+// ══════════════════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════════════════
+function renderAll(){
+  const{ot,mo}=calcTotals();
+  const d=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('headerDate').textContent=d;
+  document.getElementById('headerTotal').textContent=fmt(ot);
+  document.getElementById('headerMonthly').textContent=`+ ${fmt(mo)}/month`;
+  document.getElementById('footerTotal').textContent=fmt(ot);
+  document.getElementById('footerMonthly').textContent=`+ ${fmt(mo)} /month`;
+  document.getElementById('footerTag').textContent=option==='shopify'?'Shopify':'Custom Build';
+  renderFeatures();renderRecurring();renderMaintenance();renderCatalog();renderDeferred();renderPhase2();renderSummary(ot,mo);
+}
+
+function renderFeatures(){
+  let h='';
+  CATS.forEach(cat=>{
+    const vis=features.filter(f=>f.cat===cat.id&&f.phase===1&&!(option==='shopify'&&f.co)&&!(option==='custom'&&f.so));
+    if(!vis.length)return;
+    const exp=expandedCats.has(cat.id);
+    const sel=vis.filter(f=>f.inc).length;
+    h+=`<div style="margin-top:24px;">
+      <button class="cat-header" style="background:${cat.bg};" onclick="toggleCat('${cat.id}')">
+        <span style="font-size:17px;">${cat.ic}</span>
+        <span class="cat-label" style="color:${cat.c};">${cat.l}</span>
+        <span class="cat-count">${sel}/${vis.length}</span>
+        ${svgChevron(cat.c,exp?'open':'')}
+      </button>`;
+    if(exp){
+      vis.forEach(f=>{
+        const p=getP(f);const p2=f.phase===2;
+        h+=`<div class="feat-card${!f.inc?' excluded':''}${p2?' phase2':''}" style="border-left-color:${p2?'#FCD34D':cat.c};">
+          <div class="feat-inner">
+            <div class="feat-top">
+              <button class="feat-toggle ${f.inc?'on':'off'}" onclick="toggleFeat('${f.id}')">
+                ${f.inc?svgCheck():''}
+              </button>
+              <div class="feat-body">
+                <div class="feat-name-row">
+                  <div style="flex:1;min-width:0;">
+                    <div class="feat-name">${f.n}${p2?'<span class="phase2-badge">Phase 2</span>':''}</div>
+                    <div class="feat-tag">${f.tag}</div>
+                  </div>
+                  <div class="feat-price">
+                    <div class="feat-price-val${!f.inc?' struck':''}">${p===0?'—':fmt(p)}</div>
+                    ${p>0?'<div class="feat-price-lbl">one-time</div>':''}
+                  </div>
+                </div>
+                <div class="feat-desc">${f.sd}</div>
+                <div class="feat-actions">
+                  <button class="feat-action details" onclick="openDetail('${f.id}')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    Full Details
+                  </button>
+                  ${f.push&&f.phase===1?`<button class="feat-action push" onclick="pushFeat('${f.id}')">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    Defer to Phase 2
+                  </button>`:''}
+                  ${f.phase===2?`<button class="feat-action pull" onclick="pushFeat('${f.id}')">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 5 5 12 12 19"/></svg>
+                    Back to Phase 1
+                  </button>`:''}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      });
+    }
+    h+='</div>';
+  });
+  document.getElementById('featuresContainer').innerHTML=h;
+}
+
+function renderRecurring(){
+  let h='';
+  DEF_R.forEach(r=>{
+    if(option==='shopify'&&r.co)return;if(option==='custom'&&r.so)return;
+    const p=getRec(r);if(p===0)return;
+    h+=`<div class="card-row">
+      <div style="flex:1;min-width:0;"><div class="card-row-name">${r.n}</div><div class="card-row-desc">${r.d}</div></div>
+      <div class="card-row-price"><div class="card-row-price-val">${fmt(p)}</div><div class="card-row-price-per">/${r.per}</div></div>
+    </div>`;
+  });
+  document.getElementById('recurringContainer').innerHTML=h||'<div class="card-row"><div class="card-row-desc" style="color:#94A3B8;">No additional recurring costs for this option.</div></div>';
+}
+
+function renderMaintenance(){
+  let h='';
+  Object.entries(DEF_M).forEach(([key,plan])=>{
+    const p=getMaint(key);const active=maintPlan===key;
+    h+=`<button class="maint-card${active?' active':''}" onclick="setMaint('${key}')">
+      <div class="maint-check-row">
+        <div class="maint-card-name">${plan.n}</div>
+        ${active?`<div style="width:18px;height:18px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;">${svgCheck('white',10)}</div>`:''}
+      </div>
+      <div class="maint-card-price">${fmt(p)}</div>
+      <div class="maint-card-per">/month</div>
+      ${plan.inc.slice(0,5).map(i=>`<div class="maint-inc-item">
+        <div class="maint-inc-dot" style="background:var(--accent);">${svgCheck('white',8)}</div>
+        <div class="maint-inc-text">${i}</div>
+      </div>`).join('')}
+      ${plan.inc.length>5?`<div class="more-label">+${plan.inc.length-5} more inclusions</div>`:''}
+      <button class="view-plan-btn" onclick="event.stopPropagation();openPlanDetail('${key}')">View full plan details →</button>
+    </button>`;
+  });
+  document.getElementById('maintContainer').innerHTML=h;
+}
+
+function renderCatalog(){
+  const cr=catalogRates;
+  document.getElementById('catalogContainer').innerHTML=`
+    <div class="card-row">
+      <div style="flex:1;min-width:0;"><div class="card-row-name">Product Photography</div>
+      <div class="card-row-desc">4 angles per product — front, back, side, close-up — on a white background. Colour-corrected, cropped, and web-optimised. For 500 products that's 2,000 individual photos requiring lighting, shooting, and post-processing. Each image then resized to 3–4 web formats.</div></div>
+      <div class="card-row-price"><div class="card-row-price-val">${fmt(cr.photoPerProd)}/product</div><div class="card-row-price-per">or ${fmt(cr.photoPerDay)}/shoot day</div></div>
+    </div>
+    <div class="card-row">
+      <div style="flex:1;min-width:0;"><div class="card-row-name">Product Data Entry & Upload</div>
+      <div class="card-row-desc">Every product needs: title, full description, complete specifications, 4+ images linked, all variants (size/colour/brand) configured, category assigned, price set, HSN code added, and SEO metadata written. ~15 minutes per product. For 500 products: over 125 hours of careful data work. Total for 500: ${fmt(cr.uploadPerProd*500)}.</div></div>
+      <div class="card-row-price"><div class="card-row-price-val">${fmt(cr.uploadPerProd)}/product</div></div>
+    </div>
+    <div class="card-row">
+      <div style="flex:1;min-width:0;"><div class="card-row-name">Product Description Writing</div>
+      <div class="card-row-desc">If only specifications are provided — we write compelling, SEO-friendly descriptions that inform, reassure, and sell. Additional charge on top of the upload fee above.</div></div>
+      <div class="card-row-price"><div class="card-row-price-val">${fmt(cr.descPerProd)}/product</div><div class="card-row-price-per">if needed</div></div>
+    </div>`;
+}
+
+function renderDeferred(){
+  const def=features.filter(f=>f.phase===2);
+  const sec=document.getElementById('deferredSection');
+  if(!def.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  document.getElementById('deferredContainer').innerHTML=def.map(f=>`
+    <div class="defer-item">
+      <div><div class="defer-name">${f.n}</div><div class="defer-tag">${f.tag}</div></div>
+      <button class="defer-btn" onclick="pushFeat('${f.id}')">↩ Back to Phase 1</button>
+    </div>`).join('');
+}
+
+function renderPhase2(){
+  document.getElementById('phase2PreviewContainer').innerHTML=P2_FEATURES.map(f=>`
+    <div class="p2-item">
+      <div class="p2-dot"></div>
+      <div><div class="p2-name">${f.n}</div><div class="p2-desc">${f.d}</div></div>
+    </div>`).join('');
+}
+
+function renderSummary(ot,mo){
+  const incF=features.filter(f=>f.inc&&f.phase===1&&!(option==='shopify'&&f.co)&&!(option==='custom'&&f.so));
+  const def=features.filter(f=>f.phase===2);
+  const cr=catalogRates;const mp=getMaint(maintPlan);
+  const yrDomain=option==='shopify'?(recurringPrices['domain-renew_ps']??DEF_R.find(r=>r.id==='domain-renew').ps):(recurringPrices['domain-renew_pc']??DEF_R.find(r=>r.id==='domain-renew').pc);
+  document.getElementById('summaryContent').innerHTML=`
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px;">
+      <div><div class="summary-total-label">Total one-time estimate</div>
+      <div class="summary-total-val">${fmt(ot)}</div></div>
+      <div style="text-align:right;flex-shrink:0;margin-top:6px;">
+        <div style="font-size:10px;color:#64748B;text-transform:uppercase;letter-spacing:.06em;">Monthly ongoing</div>
+        <div style="font-size:20px;font-weight:800;color:#38BDF8;margin-top:2px;">${fmt(mo)}</div>
+      </div>
+    </div>
+    <hr class="summary-divider">
+    <div class="summary-row"><span class="summary-label">${incF.length} features selected</span><span class="summary-val">${fmt(ot)}</span></div>
+    <div class="summary-row"><span class="summary-label">Platform & tools</span><span class="summary-val">${fmt(mo-mp)}/mo</span></div>
+    <div class="summary-row"><span class="summary-label">${DEF_M[maintPlan].n}</span><span class="summary-val">${fmt(mp)}/mo</span></div>
+    <div class="summary-row"><span class="summary-label">Domain renewal</span><span class="summary-val">${fmt(yrDomain)}/yr</span></div>
+    <div class="summary-row"><span class="summary-label">Catalog — 500 products</span><span class="summary-val">${fmt(cr.uploadPerProd*500)}–${fmt((cr.uploadPerProd+cr.descPerProd)*500)}</span></div>
+    <div class="summary-row"><span class="summary-label">Photography</span><span class="summary-val" style="color:#64748B;">At actuals</span></div>
+    ${def.length?`<div class="summary-row"><span class="summary-label" style="color:#F59E0B;">${def.length} feature(s) deferred to Phase 2</span><span class="summary-val" style="color:#F59E0B;">Quoted later</span></div>`:''}
+    <hr class="summary-divider">
+    <div style="margin-bottom:10px;"><div class="summary-total-label">Suggested payment milestones</div></div>
+    <div class="milestone-row"><span>40% at contract signing</span><span class="milestone-val">${fmt(Math.round(ot*.4))}</span></div>
+    <div class="milestone-row"><span>30% at design / staging approval</span><span class="milestone-val">${fmt(Math.round(ot*.3))}</span></div>
+    <div class="milestone-row"><span>30% before go-live</span><span class="milestone-val">${fmt(Math.round(ot*.3))}</span></div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  INTERACTIONS
+// ══════════════════════════════════════════════════════
+function toggleCat(id){if(expandedCats.has(id))expandedCats.delete(id);else expandedCats.add(id);renderFeatures();}
+function toggleFeat(id){const f=features.find(x=>x.id===id);if(f)f.inc=!f.inc;renderAll();}
+function pushFeat(id){const f=features.find(x=>x.id===id);if(f)f.phase=f.phase===1?2:1;renderAll();}
+function setMaint(key){maintPlan=key;renderAll();}
+
+// ══════════════════════════════════════════════════════
+//  FEATURE DETAIL SHEET
+// ══════════════════════════════════════════════════════
+function openDetail(id){
+  const f=features.find(x=>x.id===id);if(!f)return;
+  const psV=prices[f.id+'_ps']!==undefined?prices[f.id+'_ps']:f.ps;
+  const pcV=prices[f.id+'_pc']!==undefined?prices[f.id+'_pc']:f.pc;
+  document.getElementById('detailSheetTitle').textContent=f.n;
+  const descH=f.fd.split('\n').map(ln=>{
+    if(ln.startsWith('•'))return`<div class="bullet"><span class="bullet-dot">•</span><span>${ln.slice(1).trim()}</span></div>`;
+    if(ln==='')return'<div style="height:8px;"></div>';
+    const isHead=ln===ln.toUpperCase()&&ln.trim().length>0&&ln.trim().length<50&&!ln.startsWith('•');
+    return isHead?`<p style="font-weight:700;color:#0F172A;font-size:13px;margin-bottom:4px;">${ln}</p>`:`<p>${ln}</p>`;
+  }).join('');
+  document.getElementById('detailSheetBody').innerHTML=`
+    <p style="font-size:12px;color:#94A3B8;margin-bottom:14px;">${f.tag}</p>
+    <div class="detail-price-row">
+      ${psV>0?`<div class="detail-price-badge" style="background:#F0FDF4;border:1px solid #BBF7D0;">
+        <div class="detail-price-badge-label" style="color:#15803D;">Shopify</div>
+        <div class="detail-price-badge-val" style="color:#166534;">${fmt(psV)}</div>
+      </div>`:''}
+      ${pcV>0?`<div class="detail-price-badge" style="background:#EEF2FF;border:1px solid #C7D2FE;">
+        <div class="detail-price-badge-label" style="color:#4338CA;">Custom Build</div>
+        <div class="detail-price-badge-val" style="color:#3730A3;">${fmt(pcV)}</div>
+      </div>`:''}
+    </div>
+    <div class="detail-meta">
+      <div class="detail-meta-chip"><div class="detail-meta-chip-label">Effort</div><div class="detail-meta-chip-val">${f.eff}</div></div>
+      <div class="detail-meta-chip"><div class="detail-meta-chip-label">Timeline</div><div class="detail-meta-chip-val">${f.tl}</div></div>
+    </div>
+    <div class="detail-desc">${descH}</div>
+    ${f.push?'<div class="detail-note">💡 This feature can be safely deferred to Phase 2 without affecting other functionality.</div>':''}
+    ${f.co?'<div class="detail-note" style="background:#F0F9FF;border-color:#BAE6FD;color:#0C4A6E;">ℹ️ This feature applies to the Custom Build option only.</div>':''}`;
+  openSheet('detailSheet');
+}
+
+// ══════════════════════════════════════════════════════
+//  MAINTENANCE PLAN DETAIL SHEET
+// ══════════════════════════════════════════════════════
+function openPlanDetail(key){
+  const plan=DEF_M[key];const p=getMaint(key);
+  document.getElementById('planSheetTitle').textContent=plan.n+' — '+fmt(p)+'/month';
+  document.getElementById('planSheetBody').innerHTML=`
+    <div class="plan-detail-section">
+      <div class="plan-detail-title" style="color:#059669;">✅ What's Included</div>
+      ${plan.inc.map(i=>`<div class="plan-detail-item">
+        <span class="plan-detail-check" style="color:#059669;">${svgCheck('#059669',14)}</span>
+        <span>${i}</span>
+      </div>`).join('')}
+    </div>
+    <div class="plan-detail-section" style="margin-top:20px;">
+      <div class="plan-detail-title" style="color:#DC2626;">🚫 Not Included (Quoted Separately)</div>
+      ${plan.exc.map(i=>`<div class="plan-detail-item">
+        <span class="plan-detail-check" style="color:#DC2626;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </span>
+        <span>${i}</span>
+      </div>`).join('')}
+    </div>
+    <div style="margin-top:20px;padding:14px;background:#F8FAFC;border-radius:12px;font-size:12px;color:#64748B;line-height:1.6;">
+      Additional product uploads beyond the plan limit are charged at <strong>${fmt(catalogRates.uploadPerProd)}/product</strong>. Any development, new features, or integrations are always scoped and quoted in advance before work begins.
+    </div>`;
+  openSheet('planSheet');
+}
+
+// ══════════════════════════════════════════════════════
+//  ADMIN SHEET
+// ══════════════════════════════════════════════════════
+function setAdminTab(tab){
+  activeAdminTab=tab;
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.toggle('active',t.textContent.toLowerCase()===tab));
+  renderAdminBody();
+}
+
+function renderAdminBody(){
+  const body=document.getElementById('adminBody');
+  if(activeAdminTab==='features'){
+    body.innerHTML=`<p class="admin-section-note">Edit prices for each feature. Both Shopify and Custom prices are editable. Changes apply after saving.</p>`+
+      DEF_F.map(f=>`<div class="admin-feat-card">
+        <div class="admin-feat-name">${f.n}</div>
+        <div class="admin-price-grid">
+          <div><label class="admin-price-label" style="color:#059669;">Shopify (₹)</label>
+            <input class="admin-price-input" type="number" id="ep_${f.id}_ps" value="${prices[f.id+'_ps']!==undefined?prices[f.id+'_ps']:f.ps}" style="border-color:#D1FAE5;"></div>
+          <div><label class="admin-price-label" style="color:#4338CA;">Custom Build (₹)</label>
+            <input class="admin-price-input" type="number" id="ep_${f.id}_pc" value="${prices[f.id+'_pc']!==undefined?prices[f.id+'_pc']:f.pc}" style="border-color:#C7D2FE;"></div>
+        </div>
+      </div>`).join('');
+  }else if(activeAdminTab==='recurring'){
+    body.innerHTML=`<p class="admin-section-note">Edit recurring cost amounts. The "per year" item appears in the summary but not in the monthly total.</p>`+
+      DEF_R.map(r=>`<div class="admin-feat-card">
+        <div class="admin-feat-name">${r.n} <span style="font-weight:400;color:#94A3B8;font-size:11px;">per ${r.per}</span></div>
+        <div class="admin-price-grid">
+          <div><label class="admin-price-label" style="color:#059669;">Shopify (₹)</label>
+            <input class="admin-price-input" type="number" id="rp_${r.id}_ps" value="${recurringPrices[r.id+'_ps']!==undefined?recurringPrices[r.id+'_ps']:r.ps}" style="border-color:#D1FAE5;"></div>
+          <div><label class="admin-price-label" style="color:#4338CA;">Custom (₹)</label>
+            <input class="admin-price-input" type="number" id="rp_${r.id}_pc" value="${recurringPrices[r.id+'_pc']!==undefined?recurringPrices[r.id+'_pc']:r.pc}" style="border-color:#C7D2FE;"></div>
+        </div>
+      </div>`).join('');
+  }else if(activeAdminTab==='catalog'){
+    const items=[
+      {k:'photoPerProd',l:'Photography — per product (₹)',d:'4 angles, edited, web-optimised'},
+      {k:'photoPerDay',l:'Photography — per shoot day (₹)',d:'~60–120 products per day'},
+      {k:'uploadPerProd',l:'Data entry & upload — per product (₹)',d:'Full setup: specs, variants, images, SEO meta'},
+      {k:'descPerProd',l:'Description writing — per product (₹)',d:'Additional charge if client provides only specs'},
+    ];
+    body.innerHTML=`<p class="admin-section-note">Set per-unit catalog rates. These appear in the catalog section and the summary calculation.</p>`+
+      items.map(i=>`<div class="admin-feat-card">
+        <div class="admin-feat-name">${i.l}</div>
+        <div style="font-size:11px;color:#94A3B8;margin-bottom:8px;">${i.d}</div>
+        <input class="admin-price-input" type="number" id="cr_${i.k}" value="${catalogRates[i.k]}">
+      </div>`).join('');
+  }else if(activeAdminTab==='maintenance'){
+    body.innerHTML=`<p class="admin-section-note">Edit monthly maintenance plan prices for each option.</p>`+
+      Object.entries(DEF_M).map(([key,plan])=>`<div class="admin-feat-card">
+        <div class="admin-feat-name">${plan.n}</div>
+        <div class="admin-price-grid">
+          <div><label class="admin-price-label" style="color:#059669;">Shopify (₹/mo)</label>
+            <input class="admin-price-input" type="number" id="mp_${key}_ps" value="${mPrices[key+'_ps']!==undefined?mPrices[key+'_ps']:plan.ps}" style="border-color:#D1FAE5;"></div>
+          <div><label class="admin-price-label" style="color:#4338CA;">Custom (₹/mo)</label>
+            <input class="admin-price-input" type="number" id="mp_${key}_pc" value="${mPrices[key+'_pc']!==undefined?mPrices[key+'_pc']:plan.pc}" style="border-color:#C7D2FE;"></div>
+        </div>
+      </div>`).join('');
+  }else if(activeAdminTab==='settings'){
+    body.innerHTML=`
+      <div class="admin-feat-card">
+        <div class="admin-feat-name">Change Admin PIN</div>
+        <div style="font-size:12px;color:#94A3B8;margin-bottom:10px;">Set a new 4-digit numeric PIN. Current PIN remains active until you save.</div>
+        <input class="admin-price-input" type="password" maxlength="4" id="newPinInput" placeholder="New 4-digit PIN" style="letter-spacing:6px;font-size:20px;text-align:center;" oninput="this.value=this.value.replace(/\\D/g,'').slice(0,4)">
+      </div>
+      <div class="admin-feat-card" style="margin-top:10px;">
+        <div class="admin-feat-name">Reset All Prices to Defaults</div>
+        <div style="font-size:12px;color:#94A3B8;margin-bottom:10px;">Clears all your custom prices and restores the original values. This cannot be undone.</div>
+        <button class="admin-reset-btn" onclick="resetPrices()">⚠ Reset to Default Prices</button>
+      </div>
+      <div class="admin-feat-card" style="margin-top:10px;background:#F0FDF4;border:1px solid #BBF7D0;">
+        <div class="admin-feat-name" style="color:#166534;">💾 Storage</div>
+        <div style="font-size:12px;color:#166534;">All price changes are saved in your browser's localStorage. They persist across page refreshes and browser restarts on the same device.</div>
+      </div>`;
+  }
+}
+
+function resetPrices(){
+  if(!confirm('Reset all prices to defaults? This cannot be undone.'))return;
+  prices={};recurringPrices={};mPrices={};catalogRates={...DEF_CAT};
+  saveStorage();renderAdminBody();renderAll();
+}
+
+function saveAdmin(){
+  // Features
+  DEF_F.forEach(f=>{
+    const ps=document.getElementById('ep_'+f.id+'_ps');
+    const pc=document.getElementById('ep_'+f.id+'_pc');
+    if(ps)prices[f.id+'_ps']=Number(ps.value)||0;
+    if(pc)prices[f.id+'_pc']=Number(pc.value)||0;
+  });
+  // Recurring
+  DEF_R.forEach(r=>{
+    const ps=document.getElementById('rp_'+r.id+'_ps');
+    const pc=document.getElementById('rp_'+r.id+'_pc');
+    if(ps)recurringPrices[r.id+'_ps']=Number(ps.value)||0;
+    if(pc)recurringPrices[r.id+'_pc']=Number(pc.value)||0;
+  });
+  // Catalog
+  ['photoPerProd','photoPerDay','uploadPerProd','descPerProd'].forEach(k=>{
+    const el=document.getElementById('cr_'+k);
+    if(el)catalogRates[k]=Number(el.value)||0;
+  });
+  // Maintenance
+  Object.keys(DEF_M).forEach(key=>{
+    const ps=document.getElementById('mp_'+key+'_ps');
+    const pc=document.getElementById('mp_'+key+'_pc');
+    if(ps)mPrices[key+'_ps']=Number(ps.value)||0;
+    if(pc)mPrices[key+'_pc']=Number(pc.value)||0;
+  });
+  // PIN
+  const newPinEl=document.getElementById('newPinInput');
+  if(newPinEl&&newPinEl.value.length===4)adminPin=newPinEl.value;
+  saveStorage();
+  const btn=document.getElementById('adminSaveBtn');
+  btn.classList.add('saved');
+  btn.innerHTML=`${svgCheck('white',15)} All Changes Saved`;
+  setTimeout(()=>{
+    btn.classList.remove('saved');
+    btn.innerHTML=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save All Changes`;
+    closeSheet('adminSheet');
+    renderAll();
+  },2000);
+}
+
+// ══════════════════════════════════════════════════════
+//  SHEET CONTROL
+// ══════════════════════════════════════════════════════
+function openSheet(id){
+  document.getElementById('backdrop').classList.add('open');
+  document.getElementById(id).classList.add('open');
+  if(id==='adminSheet')renderAdminBody();
+}
+function closeSheet(id){
+  document.getElementById(id).classList.remove('open');
+  const any=['detailSheet','adminSheet','planSheet'].some(s=>document.getElementById(s).classList.contains('open'));
+  if(!any)document.getElementById('backdrop').classList.remove('open');
+}
+function closeAllSheets(){
+  ['detailSheet','adminSheet','planSheet'].forEach(s=>document.getElementById(s).classList.remove('open'));
+  document.getElementById('backdrop').classList.remove('open');
+}
+
+// ══════════════════════════════════════════════════════
+//  PIN MODAL
+// ══════════════════════════════════════════════════════
+let pinInput='';
+function openPinModal(){pinInput='';updatePinDots();document.getElementById('pinOverlay').classList.add('open');}
+function closePinModal(){document.getElementById('pinOverlay').classList.remove('open');pinInput='';}
+function handlePinBackdrop(e){if(e.target===document.getElementById('pinOverlay'))closePinModal();}
+function updatePinDots(err){for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);d.className='pin-dot'+(i<pinInput.length?' '+(err?'error':'filled'):'');}}
+function pinKey(k){
+  if(pinInput.length>=4)return;
+  pinInput+=k;updatePinDots();
+  if(pinInput.length===4){
+    if(pinInput===adminPin){
+      setTimeout(()=>{closePinModal();setAdminTab('features');openSheet('adminSheet');},150);
+    }else{
+      const dots=document.getElementById('pinDots');
+      updatePinDots(true);dots.classList.add('shake');
+      setTimeout(()=>{pinInput='';updatePinDots();dots.classList.remove('shake');},800);
+    }
+  }
+}
+function pinDel(){pinInput=pinInput.slice(0,-1);updatePinDots();}
+
+// ══════════════════════════════════════════════════════
+//  PRINT / PDF
+// ══════════════════════════════════════════════════════
+function buildPrintView(){
+  const{ot,mo}=calcTotals();
+  const incF=features.filter(f=>f.inc&&f.phase===1&&!(option==='shopify'&&f.co)&&!(option==='custom'&&f.so));
+  const def=features.filter(f=>f.phase===2);
+  const cr=catalogRates;const mp=getMaint(maintPlan);
+  const optLabel=option==='shopify'?'Shopify':'Custom Build (WooCommerce + VPS)';
+  const optColor=option==='shopify'?'#059669':'#4338CA';
+  const optBg=option==='shopify'?'#ECFDF5':'#EEF2FF';
+  const dateStr=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  const qNum='EST-'+new Date().getFullYear()+'-'+String(Math.floor(Math.random()*9000)+1000);
+
+  // Group features by category
+  const catGroups={};
+  CATS.forEach(cat=>{
+    const catF=incF.filter(f=>f.cat===cat.id);
+    if(catF.length)catGroups[cat.id]={cat,features:catF};
+  });
+
+  let tableRows='';
+  Object.values(catGroups).forEach(({cat,features:catF})=>{
+    tableRows+=`<tr class="pv-cat-row"><td colspan="3">${cat.ic} ${cat.l}</td></tr>`;
+    catF.forEach(f=>{
+      const p=getP(f);
+      tableRows+=`<tr>
+        <td style="padding-left:20px;">${f.n}</td>
+        <td style="color:#64748B;font-size:11px;">${f.eff}</td>
+        <td>${fmt(p)}</td>
+      </tr>`;
+    });
+  });
+  tableRows+=`<tr class="pv-total-row"><td colspan="2"><strong>TOTAL — ONE-TIME ESTIMATE</strong></td><td><strong>${fmt(ot)}</strong></td></tr>`;
+
+  const comments=document.getElementById('clientComments').value;
+
+  document.getElementById('printView').innerHTML=`
+    <div style="padding:32px;max-width:760px;margin:0 auto;font-family:'Plus Jakarta Sans',sans-serif;color:#0F172A;">
+      <div class="pv-header">
+        <div>
+          <div class="pv-company">eCommerce Website Estimate</div>
+          <div class="pv-sub">Hardware Store, Rampurhat, West Bengal &nbsp;·&nbsp; Phase 1</div>
+          <div style="margin-top:10px;display:inline-block;padding:4px 14px;border-radius:99px;font-size:11px;font-weight:700;background:${optBg};color:${optColor};">${optLabel}</div>
+        </div>
+        <div class="pv-quote-no">
+          <div class="pv-quote-label">Estimate No.</div>
+          <div class="pv-quote-val">${qNum}</div>
+          <div class="pv-quote-label" style="margin-top:8px;">Date</div>
+          <div class="pv-quote-val">${dateStr}</div>
+        </div>
+      </div>
+
+      <div class="pv-section-title">One-Time Setup</div>
+      <table class="pv-table">
+        <thead><tr><th style="width:50%;">Feature</th><th>Effort</th><th style="text-align:right;">Price</th></tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+
+      <div class="pv-section-title">Recurring Monthly Costs</div>
+      <table class="pv-table">
+        <thead><tr><th style="width:60%;">Item</th><th>Period</th><th style="text-align:right;">Amount</th></tr></thead>
+        <tbody>
+          ${DEF_R.filter(r=>!(option==='shopify'&&r.co)&&!(option==='custom'&&r.so)&&getRec(r)>0).map(r=>`<tr>
+            <td>${r.n}</td><td style="color:#64748B;font-size:11px;">per ${r.per}</td><td>${fmt(getRec(r))}</td>
+          </tr>`).join('')}
+          <tr><td>${DEF_M[maintPlan].n}</td><td style="color:#64748B;font-size:11px;">per month</td><td>${fmt(mp)}</td></tr>
+          <tr class="pv-total-row"><td colspan="2"><strong>TOTAL MONTHLY ESTIMATE</strong></td><td><strong>${fmt(mo)}</strong></td></tr>
+        </tbody>
+      </table>
+
+      <div class="pv-section-title">Catalog Work (Per-Unit, Billed Separately)</div>
+      <table class="pv-table">
+        <thead><tr><th>Item</th><th>Rate</th><th style="text-align:right;">Est. for 500 Products</th></tr></thead>
+        <tbody>
+          <tr><td>Photography</td><td>${fmt(cr.photoPerProd)}/product or ${fmt(cr.photoPerDay)}/day</td><td>At actuals</td></tr>
+          <tr><td>Data Entry & Upload</td><td>${fmt(cr.uploadPerProd)}/product</td><td>${fmt(cr.uploadPerProd*500)}</td></tr>
+          <tr><td>Description Writing (if needed)</td><td>${fmt(cr.descPerProd)}/product</td><td>${fmt(cr.descPerProd*500)}</td></tr>
+        </tbody>
+      </table>
+
+      <div class="pv-section-title">Suggested Payment Milestones</div>
+      <div class="pv-milestone-row"><span>40% at contract signing</span><span style="font-weight:700;">${fmt(Math.round(ot*.4))}</span></div>
+      <div class="pv-milestone-row"><span>30% at design / staging approval</span><span style="font-weight:700;">${fmt(Math.round(ot*.3))}</span></div>
+      <div class="pv-milestone-row"><span>30% before go-live</span><span style="font-weight:700;">${fmt(Math.round(ot*.3))}</span></div>
+
+      ${def.length?`<div style="margin-top:16px;padding:10px 14px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;font-size:12px;color:#78350F;">
+        <strong>Deferred to Phase 2:</strong> ${def.map(f=>f.n).join(', ')}. These will be scoped and quoted separately.
+      </div>`:''}
+
+      ${comments?`<div style="margin-top:16px;"><div class="pv-section-title" style="font-size:13px;">Client Notes</div>
+        <div style="font-size:12px;color:#475569;line-height:1.6;padding:10px 14px;background:#F8FAFC;border-radius:8px;">${comments}</div></div>`:''}
+
+      <div class="pv-disclaimer">
+        <strong>Important:</strong> This is a preliminary estimate, not a final quotation. Pricing may vary based on scope changes, additional requirements, or complexity discovered during the project. All prices are in Indian Rupees (INR), inclusive of our service fees but exclusive of applicable GST (18%), domain registration cost, Shopify theme purchase cost (if applicable), and third-party transaction fees (Razorpay 2% per transaction). Payment milestone amounts shown above are indicative. A formal agreement will be shared before work begins.
+      </div>
+    </div>`;
+}
+
+function generatePDF(){
+  buildPrintView();
+  window.print();
+}
+
+// ══════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════
+loadStorage();
+</script>
+</body>
+</html>
