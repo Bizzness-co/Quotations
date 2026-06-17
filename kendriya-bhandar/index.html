@@ -264,11 +264,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F8F9FC;color:#0F172A
     </div>
     <div class="option-toggle">
       <button class="opt-btn active" id="btn-shopify" onclick="setOption('shopify')">
-        <span class="opt-btn-label">RetailOS Core</span>
+        <span class="opt-btn-label">Grocery RetailOS</span>
         <span class="opt-btn-sub">Network Standard</span>
       </button>
       <button class="opt-btn" id="btn-custom" onclick="setOption('custom')">
-        <span class="opt-btn-label">RetailOS Pro</span>
+        <span class="opt-btn-label">Medicine RetailOS</span>
         <span class="opt-btn-sub">AI + Mobile</span>
       </button>
     </div>
@@ -347,7 +347,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F8F9FC;color:#0F172A
       <div class="footer-total-mo" id="footerMonthly">+ — /month</div>
     </div>
     <div class="footer-spacer"></div>
-    <div class="footer-tag" id="footerTag">RetailOS Core</div>
+    <div class="footer-tag" id="footerTag">Grocery RetailOS</div>
   </div>
 </div>
 
@@ -520,8 +520,8 @@ const DEF_F=[
    eff:'Phase 4',tl:'Months 10–12',ps:0,pc:0,phase:2,inc:false,push:false,so:false,co:false},
 ];
 const DEF_R=[
-  {id:'core-subscription',n:'RetailOS Core Subscription',d:'Monthly per active store. Covers platform access, hosting, maintenance, GST and regulatory updates.',ps:999,pc:0,per:'month',so:true,co:false},
-  {id:'pro-subscription',n:'RetailOS Pro Subscription',d:'Monthly per active store. Includes AI, mobile readiness, advanced dashboards and automation.',ps:0,pc:1999,per:'month',so:false,co:true},
+  {id:'Grocery-subscription',n:'RetailOS Subscription',d:'Monthly per active store. Covers platform access, hosting, maintenance, GST and regulatory updates.',ps:999,pc:0,per:'month',so:true,co:false},
+  {id:'Medicine-subscription',n:'RetailOS Subscription',d:'Monthly per active store. Includes AI, mobile readiness, advanced dashboards and automation.',ps:0,pc:1999,per:'month',so:false,co:true},
   {id:'premium-support',n:'Premium Support Retainer',d:'Dedicated account manager, 4-hour SLA, monthly health reviews, quarterly business review, and up to 8 hours of configuration changes per month.',ps:35000,pc:35000,per:'month',so:false,co:false},
   {id:'domain-renew',n:'Domain & SSL Renewal',d:'Annual domain renewal and certificate maintenance, billed once per year.',ps:1200,pc:1200,per:'year',so:false,co:false},
 ];
@@ -694,7 +694,7 @@ function renderAll(){
   document.getElementById('headerMonthly').textContent=`+ ${fmt(mo)}/month`;
   document.getElementById('footerTotal').textContent=fmt(ot);
   document.getElementById('footerMonthly').textContent=`+ ${fmt(mo)} /month`;
-  document.getElementById('footerTag').textContent=option==='shopify'?'RetailOS Core':'RetailOS Pro';
+  document.getElementById('footerTag').textContent=option==='shopify'?'Grocery RetailOS':'Medicine RetailOS';
   renderFeatures();renderRecurring();renderMaintenance();renderCatalog();renderDeferred();renderPhase2();renderSummary(ot,mo);
 }
 
@@ -841,8 +841,8 @@ function renderSummary(ot,mo){
   const incF=features.filter(f=>f.inc&&f.phase===1&&!(option==='shopify'&&f.co)&&!(option==='custom'&&f.so));
   const def=features.filter(f=>f.phase===2);
   const cr=catalogRates;const mp=getMaint(maintPlan);
-  const coreSub=option==='shopify'?(recurringPrices['core-subscription_ps']??DEF_R.find(r=>r.id==='core-subscription').ps):(recurringPrices['core-subscription_pc']??DEF_R.find(r=>r.id==='core-subscription').pc);
-  const proSub=option==='custom'?(recurringPrices['pro-subscription_pc']??DEF_R.find(r=>r.id==='pro-subscription').pc):(recurringPrices['pro-subscription_ps']??DEF_R.find(r=>r.id==='pro-subscription').ps);
+  const GrocerySub=option==='shopify'?(recurringPrices['grocery-subscription_ps']??DEF_R.find(r=>r.id==='grocery-subscription').ps):(recurringPrices['grocery-subscription_pc']??DEF_R.find(r=>r.id==='grocery-subscription').pc);
+  const MedicineSub=option==='custom'?(recurringPrices['medicine-subscription_pc']??DEF_R.find(r=>r.id==='medicine-subscription').pc):(recurringPrices['medicine-subscription_ps']??DEF_R.find(r=>r.id==='medicine-subscription').ps);
   document.getElementById('summaryContent').innerHTML=`
     <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px;">
       <div><div class="summary-total-label">Total one-time estimate</div>
@@ -854,8 +854,8 @@ function renderSummary(ot,mo){
     </div>
     <hr class="summary-divider">
     <div class="summary-row"><span class="summary-label">${incF.length} features selected</span><span class="summary-val">${fmt(ot)}</span></div>
-    <div class="summary-row"><span class="summary-label">RetailOS Core subscription</span><span class="summary-val">${option==='shopify'?fmt(coreSub):'—'}/mo</span></div>
-    <div class="summary-row"><span class="summary-label">RetailOS Pro subscription</span><span class="summary-val">${option==='custom'?fmt(proSub):'—'}/mo</span></div>
+    <div class="summary-row"><span class="summary-label">RetailOS subscription</span><span class="summary-val">${option==='shopify'?fmt(grocerySub):'—'}/mo</span></div>
+    <div class="summary-row"><span class="summary-label">RetailOS subscription</span><span class="summary-val">${option==='custom'?fmt(medicineSub):'—'}/mo</span></div>
     <div class="summary-row"><span class="summary-label">${DEF_M[maintPlan].n}</span><span class="summary-val">${fmt(mp)}/mo</span></div>
     <div class="summary-row"><span class="summary-label">Store activation example — 50 stores</span><span class="summary-val">${fmt(cr.activationPerStore*50)}</span></div>
     <div class="summary-row"><span class="summary-label">Master data example — 1,000 SKUs</span><span class="summary-val">${fmt(cr.masterDataPerSKU*1000)}</span></div>
@@ -894,11 +894,11 @@ function openDetail(id){
     <p style="font-size:12px;color:#94A3B8;margin-bottom:14px;">${f.tag}</p>
     <div class="detail-price-row">
       ${psV>0?`<div class="detail-price-badge" style="background:#F0FDF4;border:1px solid #BBF7D0;">
-        <div class="detail-price-badge-label" style="color:#15803D;">RetailOS Core</div>
+        <div class="detail-price-badge-label" style="color:#15803D;">Grocery RetailOS</div>
         <div class="detail-price-badge-val" style="color:#166534;">${fmt(psV)}</div>
       </div>`:''}
       ${pcV>0?`<div class="detail-price-badge" style="background:#EEF2FF;border:1px solid #C7D2FE;">
-        <div class="detail-price-badge-label" style="color:#4338CA;">RetailOS Pro</div>
+        <div class="detail-price-badge-label" style="color:#4338CA;">Medicine RetailOS</div>
         <div class="detail-price-badge-val" style="color:#3730A3;">${fmt(pcV)}</div>
       </div>`:''}
     </div>
@@ -908,7 +908,7 @@ function openDetail(id){
     </div>
     <div class="detail-desc">${descH}</div>
     ${f.push?'<div class="detail-note">💡 This feature can be safely deferred to Phase 2 without affecting other functionality.</div>':''}
-    ${f.co?'<div class="detail-note" style="background:#F0F9FF;border-color:#BAE6FD;color:#0C4A6E;">ℹ️ This feature applies to the RetailOS Pro option only.</div>':''}`;
+    ${f.co?'<div class="detail-note" style="background:#F0F9FF;border-color:#BAE6FD;color:#0C4A6E;">ℹ️ This feature applies to the Medicine RetailOS option only.</div>':''}`;
   openSheet('detailSheet');
 }
 
@@ -957,9 +957,9 @@ function renderAdminBody(){
       DEF_F.map(f=>`<div class="admin-feat-card">
         <div class="admin-feat-name">${f.n}</div>
         <div class="admin-price-grid">
-          <div><label class="admin-price-label" style="color:#059669;">RetailOS Core (₹)</label>
+          <div><label class="admin-price-label" style="color:#059669;">Grocery RetailOS (₹)</label>
             <input class="admin-price-input" type="number" id="ep_${f.id}_ps" value="${prices[f.id+'_ps']!==undefined?prices[f.id+'_ps']:f.ps}" style="border-color:#D1FAE5;"></div>
-          <div><label class="admin-price-label" style="color:#4338CA;">RetailOS Pro (₹)</label>
+          <div><label class="admin-price-label" style="color:#4338CA;">Medicine RetailOS (₹)</label>
             <input class="admin-price-input" type="number" id="ep_${f.id}_pc" value="${prices[f.id+'_pc']!==undefined?prices[f.id+'_pc']:f.pc}" style="border-color:#C7D2FE;"></div>
         </div>
       </div>`).join('');
@@ -968,9 +968,9 @@ function renderAdminBody(){
       DEF_R.map(r=>`<div class="admin-feat-card">
         <div class="admin-feat-name">${r.n} <span style="font-weight:400;color:#94A3B8;font-size:11px;">per ${r.per}</span></div>
         <div class="admin-price-grid">
-          <div><label class="admin-price-label" style="color:#059669;">RetailOS Core (₹)</label>
+          <div><label class="admin-price-label" style="color:#059669;">Grocery RetailOS (₹)</label>
             <input class="admin-price-input" type="number" id="rp_${r.id}_ps" value="${recurringPrices[r.id+'_ps']!==undefined?recurringPrices[r.id+'_ps']:r.ps}" style="border-color:#D1FAE5;"></div>
-          <div><label class="admin-price-label" style="color:#4338CA;">RetailOS Pro (₹)</label>
+          <div><label class="admin-price-label" style="color:#4338CA;">Medicine RetailOS (₹)</label>
             <input class="admin-price-input" type="number" id="rp_${r.id}_pc" value="${recurringPrices[r.id+'_pc']!==undefined?recurringPrices[r.id+'_pc']:r.pc}" style="border-color:#C7D2FE;"></div>
         </div>
       </div>`).join('');
@@ -992,9 +992,9 @@ function renderAdminBody(){
       Object.entries(DEF_M).map(([key,plan])=>`<div class="admin-feat-card">
         <div class="admin-feat-name">${plan.n}</div>
         <div class="admin-price-grid">
-          <div><label class="admin-price-label" style="color:#059669;">RetailOS Core (₹/mo)</label>
+          <div><label class="admin-price-label" style="color:#059669;">Grocery RetailOS (₹/mo)</label>
             <input class="admin-price-input" type="number" id="mp_${key}_ps" value="${mPrices[key+'_ps']!==undefined?mPrices[key+'_ps']:plan.ps}" style="border-color:#D1FAE5;"></div>
-          <div><label class="admin-price-label" style="color:#4338CA;">RetailOS Pro (₹/mo)</label>
+          <div><label class="admin-price-label" style="color:#4338CA;">Medicine RetailOS (₹/mo)</label>
             <input class="admin-price-input" type="number" id="mp_${key}_pc" value="${mPrices[key+'_pc']!==undefined?mPrices[key+'_pc']:plan.pc}" style="border-color:#C7D2FE;"></div>
         </div>
       </div>`).join('');
@@ -1132,7 +1132,7 @@ function buildPrintView(){
   const incF=features.filter(f=>f.inc&&f.phase===1&&!(option==='shopify'&&f.co)&&!(option==='custom'&&f.so));
   const def=features.filter(f=>f.phase===2);
   const cr=catalogRates;const mp=getMaint(maintPlan);
-  const optLabel=option==='shopify'?'RetailOS Core':'RetailOS Pro';
+  const optLabel=option==='shopify'?'Grocery RetailOS':'Medicine RetailOS';
   const optColor=option==='shopify'?'#059669':'#4338CA';
   const optBg=option==='shopify'?'#ECFDF5':'#EEF2FF';
   const dateStr=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
