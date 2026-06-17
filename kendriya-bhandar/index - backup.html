@@ -305,7 +305,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F8F9FC;color:#0F172A
   </div>
 
   <div class="section">
-    <div class="sec-title serif">Future Roadmap Preview</div>
+    <div class="sec-title serif">Phase 3 & 4 Roadmap Preview</div>
     <div class="sec-sub">Future capabilities planned after your store is live and performing well.</div>
     <div class="p2-grid" id="phase2PreviewContainer"></div>
   </div>
@@ -502,7 +502,7 @@ const DEF_F=[
   {id:'store-activation',cat:'network',n:'Store Activation Fee',tag:'Additional store onboarding',
    sd:'One-time fee for each new store beyond the pilot network.',
    fd:'Activation includes:\n\n• Store profile and configuration setup\n• User account creation and access provisioning\n• POS configuration and hardware checklist\n• GST and tax profile per store\n• Opening stock entry and inventory setup\n• Remote training for store manager and billing staff\n\nPilot stores are included in the platform establishment fee. Additional stores are billed separately.',
-   eff:'1–2 hrs/store',tl:'1 business day',ps:3500,pc:3500,phase:1,inc:false,push:false,so:false,co:false},
+   eff:'1–2 hrs/store',tl:'1 business day',ps:5000,pc:5000,phase:1,inc:false,push:false,so:false,co:false},
 
   {id:'master-data',cat:'network',n:'Master Data Migration & Cleanup',tag:'SKU, vendor and store masters',
    sd:'Optional migration and validation of master data for rollout speed and accuracy.',
@@ -512,7 +512,7 @@ const DEF_F=[
   {id:'ai-replenishment',cat:'intelligence',n:'AI Replenishment Engine',tag:'Demand forecasting and auto-reorder',
    sd:'Forecasting, reorder suggestions, and dead-stock detection that improve with data.',
    fd:'AI-driven replenishment module:\n\n• SKU-level sales velocity analysis per store\n• Seasonal trend detection and adjustment\n• Day-of-week and event-based demand patterns\n• New store baseline forecasting using network averages\n• Automated reorder suggestions delivered to Head Office daily\n• Priority-ranked dispatch queue for warehouse team\n• Lead time awareness for supplier and transit times\n• Out-of-stock risk alerts before stockouts occur\n• Slow-moving and non-moving SKU detection\n• Markdown and clearance recommendations',
-   eff:'Phase 3',tl:'Months 7–9',ps:0,pc:0,phase:1,inc:true,push:false,so:false,co:false},
+   eff:'Phase 3',tl:'Months 7–9',ps:0,pc:0,phase:2,inc:false,push:false,so:false,co:false},
 
   {id:'mobile-apps',cat:'mobile',n:'Mobile Applications',tag:'Manager and supervisor apps',
    sd:'Android and iOS apps for store-level tasks and supervisor movement.',
@@ -520,19 +520,20 @@ const DEF_F=[
    eff:'Phase 4',tl:'Months 10–12',ps:0,pc:0,phase:2,inc:false,push:false,so:false,co:false},
 ];
 const DEF_R=[
-  {id:'platform-subscription',n:'Platform Subscription Fee',d:'Unified subscription per active store. Includes AI replenishment, hosting, maintenance, updates and platform access.',ps:1499,pc:1499,per:'month',so:false,co:false},
+  {id:'Grocery-subscription',n:'RetailOS Subscription',d:'Monthly per active store. Covers platform access, hosting, maintenance, GST and regulatory updates.',ps:999,pc:0,per:'month',so:true,co:false},
+  {id:'Medicine-subscription',n:'RetailOS Subscription',d:'Monthly per active store. Includes AI, mobile readiness, advanced dashboards and automation.',ps:0,pc:1999,per:'month',so:false,co:true},
   {id:'premium-support',n:'Premium Support Retainer',d:'Dedicated account manager, 4-hour SLA, monthly health reviews, quarterly business review, and up to 8 hours of configuration changes per month.',ps:35000,pc:35000,per:'month',so:false,co:false},
   {id:'domain-renew',n:'Domain & SSL Renewal',d:'Annual domain renewal and certificate maintenance, billed once per year.',ps:1200,pc:1200,per:'year',so:false,co:false},
 ];
 const DEF_M={
-  a:{n:'Support Retainer',ps:12000,pc:12000,
+  a:{n:'Plan A — Standard Care',ps:12000,pc:12000,
      inc:['Email and WhatsApp support — 48hr response SLA','Platform, plugin and app updates','Basic uptime and payment gateway monitoring','Minor text or content corrections on existing screens','Monthly issue summary','Up to 3 hours of small configuration changes'],
      exc:['New features, modules, or integrations','New page designs or layouts','Data migration or cleanup beyond basics','Additional store onboarding beyond agreed scope','Graphic design or content creation','Training refresh sessions']},
-  b:{n:'Premium Support Retainer',ps:35000,pc:35000,
+  b:{n:'Plan B — Premium Care',ps:35000,pc:35000,
      inc:['Dedicated account manager','Priority ticket response: 4-hour SLA','Monthly platform health review','Quarterly business review with recommendations','GST and regulatory change impact assessment','Up to 8 hours of configuration changes per month'],
      exc:['New features, modules, or integrations','Major development or programming work','Large data migration projects','Product or store photography','Marketing, SEO, ad campaigns, social media','New rollout documentation or training programs']},
 };
-const DEF_CAT={activationPerStore:3500,masterDataPerSKU:35,validationPerSKU:25,trainingPackPerStore:1500};
+const DEF_CAT={activationPerStore:5000,masterDataPerSKU:35,validationPerSKU:25,trainingPackPerStore:1500};
 const DEF_PIN='4826';
 const P2_FEATURES=[
   {n:'AI Replenishment Engine',d:'Demand forecasting, auto-reorder suggestions and stockout risk alerts'},
@@ -838,29 +839,33 @@ function renderPhase2(){
 
 function renderSummary(ot,mo){
   const incF=features.filter(f=>f.inc&&f.phase===1&&!(option==='shopify'&&f.co)&&!(option==='custom'&&f.so));
-  const mp=getMaint(maintPlan);
-  const skuCount=1000;
-  const md=(catalogRates.masterDataPerSKU||35)*skuCount;
-  const qa=(catalogRates.validationPerSKU||25)*skuCount;
+  const def=features.filter(f=>f.phase===2);
+  const cr=catalogRates;const mp=getMaint(maintPlan);
+  const GrocerySub=option==='shopify'?(recurringPrices['grocery-subscription_ps']??DEF_R.find(r=>r.id==='grocery-subscription').ps):(recurringPrices['grocery-subscription_pc']??DEF_R.find(r=>r.id==='grocery-subscription').pc);
+  const MedicineSub=option==='custom'?(recurringPrices['medicine-subscription_pc']??DEF_R.find(r=>r.id==='medicine-subscription').pc):(recurringPrices['medicine-subscription_ps']??DEF_R.find(r=>r.id==='medicine-subscription').ps);
   document.getElementById('summaryContent').innerHTML=`
-    <div style="margin-bottom:16px;">
-      <div class="summary-total-label">Total one-time estimate</div>
-      <div class="summary-total-val">${fmt(ot)}</div>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px;">
+      <div><div class="summary-total-label">Total one-time estimate</div>
+      <div class="summary-total-val">${fmt(ot)}</div></div>
+      <div style="text-align:right;flex-shrink:0;margin-top:6px;">
+        <div style="font-size:10px;color:#64748B;text-transform:uppercase;letter-spacing:.06em;">Monthly ongoing</div>
+        <div style="font-size:20px;font-weight:800;color:#38BDF8;margin-top:2px;">${fmt(mo)}</div>
+      </div>
     </div>
-
-    <div style="font-size:11px;color:#64748B;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Management-Level</div>
-    <div class="summary-row"><span class="summary-label">${incF.length} features selected</span><span class="summary-val">${fmt(ot)}</span></div>
-    <div class="summary-row"><span class="summary-label">Master Data Example — 1,000 SKUs</span><span class="summary-val">${fmt(md)}</span></div>
-    <div class="summary-row"><span class="summary-label">QA & Validation — 1,000 SKUs</span><span class="summary-val">${fmt(qa)}</span></div>
-    <div class="summary-row"><span class="summary-label">Support Retainer</span><span class="summary-val">${fmt(mp)}/mo</span></div>
-
     <hr class="summary-divider">
-
-    <div style="font-size:11px;color:#64748B;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Store-Level</div>
-    <div class="summary-row"><span class="summary-label">Store Activation</span><span class="summary-val">₹3,500/store</span></div>
-    <div class="summary-row"><span class="summary-label">Training</span><span class="summary-val">₹1,500/store</span></div>
-    <div class="summary-row"><span class="summary-label">Platform Subscription Fee</span><span class="summary-val">₹1,499/month</span></div>
-  `;
+    <div class="summary-row"><span class="summary-label">${incF.length} features selected</span><span class="summary-val">${fmt(ot)}</span></div>
+    <div class="summary-row"><span class="summary-label">RetailOS subscription</span><span class="summary-val">${option==='shopify'?fmt(grocerySub):'—'}/mo</span></div>
+    <div class="summary-row"><span class="summary-label">RetailOS subscription</span><span class="summary-val">${option==='custom'?fmt(medicineSub):'—'}/mo</span></div>
+    <div class="summary-row"><span class="summary-label">${DEF_M[maintPlan].n}</span><span class="summary-val">${fmt(mp)}/mo</span></div>
+    <div class="summary-row"><span class="summary-label">Store activation example — 50 stores</span><span class="summary-val">${fmt(cr.activationPerStore*50)}</span></div>
+    <div class="summary-row"><span class="summary-label">Master data example — 1,000 SKUs</span><span class="summary-val">${fmt(cr.masterDataPerSKU*1000)}</span></div>
+    <div class="summary-row"><span class="summary-label">Training pack — 10 stores</span><span class="summary-val">${fmt(cr.trainingPackPerStore*10)}</span></div>
+    ${def.length?`<div class="summary-row"><span class="summary-label" style="color:#F59E0B;">${def.length} feature(s) deferred to Phase 2</span><span class="summary-val" style="color:#F59E0B;">Quoted later</span></div>`:''}
+    <hr class="summary-divider">
+    <div style="margin-bottom:10px;"><div class="summary-total-label">Suggested payment milestones</div></div>
+    <div class="milestone-row"><span>40% at contract signing</span><span class="milestone-val">${fmt(Math.round(ot*.4))}</span></div>
+    <div class="milestone-row"><span>30% at design / staging approval</span><span class="milestone-val">${fmt(Math.round(ot*.3))}</span></div>
+    <div class="milestone-row"><span>30% before go-live</span><span class="milestone-val">${fmt(Math.round(ot*.3))}</span></div>`;
 }
 
 // ══════════════════════════════════════════════════════
